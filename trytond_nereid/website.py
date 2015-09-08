@@ -189,7 +189,7 @@ class WebSite(ModelSQL, ModelView):
         """
         login_form = LoginForm(request.form)
 
-        if not current_user.is_anonymous() and request.args.get('next'):
+        if not current_user.is_anonymous and request.args.get('next'):
             return redirect(request.args['next'])
 
         if request.method == 'POST' and login_form.validate():
@@ -310,7 +310,7 @@ class WebSite(ModelSQL, ModelView):
         rv = {
             'messages': map(unicode, get_flashed_messages()),
         }
-        if current_user.is_anonymous():
+        if current_user.is_anonymous:
             rv.update({
                 'logged_id': False
             })

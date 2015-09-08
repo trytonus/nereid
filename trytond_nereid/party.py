@@ -111,7 +111,7 @@ class Address:
                 phone=address.party.phone
             )
         else:
-            address_name = "" if request.nereid_user.is_anonymous() else \
+            address_name = "" if request.nereid_user.is_anonymous else \
                 request.nereid_user.display_name
             form = AddressForm(request.form, name=address_name)
 
