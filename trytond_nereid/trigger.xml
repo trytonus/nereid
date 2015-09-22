@@ -8,7 +8,7 @@
             <field name="on_create" eval="True" />
             <field name="on_write" eval="True" />
             <field name="on_delete" eval="True" />
-            <field name="condition" eval="'True'" />
+            <field name="condition" eval="'true'" />
             <field name="action_model" search="[('model', '=', 'nereid.website')]" />
             <field name="action_function">clear_url_adapter_cache</field>
           </record>
@@ -19,7 +19,7 @@
             <field name="on_create" eval="True" />
             <field name="on_write" eval="True" />
             <field name="on_delete" eval="True" />
-            <field name="condition" eval="'True'" />
+            <field name="condition" eval="'true'" />
             <field name="action_model" search="[('model', '=', 'nereid.website')]" />
             <field name="action_function">clear_url_adapter_cache</field>
         </record>

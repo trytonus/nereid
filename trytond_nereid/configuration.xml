@@ -27,10 +27,6 @@
 
         <menuitem name="Configuration" sequence="10"
                   id="menu_nereid_configuration" parent="menu_nereid" />
-
-        <!-- Routing -->
-        <menuitem name="Routing" id="menu_nereid_routing"
-            sequence="10" parent="menu_nereid_configuration" />
         <record model="ir.ui.view" id="website_view_form">
             <field name="model">nereid.website</field>
             <field name="type">form</field>
