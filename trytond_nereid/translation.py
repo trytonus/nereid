@@ -27,7 +27,6 @@ from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond.cache import Cache
 from trytond.tools import file_open
-from trytond.const import RECORD_CACHE_SIZE
 from trytond.ir.translation import TrytonPOFile
 
 __all__ = [
@@ -107,7 +106,10 @@ class Translation:
                 raise ValueError('Unknown translation type: %s' %
                     translation.type)
             key2ids.setdefault(key, []).append(translation.id)
-            if len(module_translations) <= RECORD_CACHE_SIZE:
+            if (
+                len(module_translations) <=
+                Transaction().context.get('_record_cache_size')
+            ):
                 id2translation[translation.id] = translation
 
         def override_translation(ressource_id, new_translation):
@@ -145,12 +147,13 @@ class Translation:
         # Make a first loop to retreive translation ids in the right order to
         # get better read locality and a full usage of the cache.
         translation_ids = []
-        if len(module_translations) <= RECORD_CACHE_SIZE:
+        record_cache_size = Transaction().context.get('_record_cache_size')
+        if len(module_translations) <= record_cache_size:
             processes = (True,)
         else:
             processes = (False, True)
         for processing in processes:
-            if processing and len(module_translations) > RECORD_CACHE_SIZE:
+            if processing and len(module_translations) > record_cache_size:
                 id2translation = dict((t.id, t)
                     for t in cls.browse(translation_ids))
             for entry in pofile:

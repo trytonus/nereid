@@ -715,7 +715,7 @@ class NereidUser(ModelSQL, ModelView):
                 pass
             else:
                 user = cls.authenticate(*header_val.split(':', 1))
-                if user and user.is_active():
+                if user and user.is_active:
                     return user
 
         # TODO: Digest authentication
@@ -752,7 +752,7 @@ class NereidUser(ModelSQL, ModelView):
             # should also be invalid.
             return None
 
-        if user.is_active():
+        if user.is_active:
             # Login only if the login_user method returns True for the user
             return user
 
@@ -800,6 +800,7 @@ class NereidUser(ModelSQL, ModelView):
             login_url(current_app.login_manager.login_view, request.url)
         )
 
+    @property
     def is_authenticated(self):
         """
         Returns True if the user is authenticated, i.e. they have provided
@@ -808,9 +809,11 @@ class NereidUser(ModelSQL, ModelView):
         """
         return bool(self.id)
 
+    @property
     def is_active(self):
         return bool(self.active)
 
+    @property
     def is_anonymous(self):
         return not self.id
 
