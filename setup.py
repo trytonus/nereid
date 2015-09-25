@@ -119,7 +119,7 @@ install_requires = [
     'pytz',
     'flask>=0.10',
     'flask-wtf',
-    'babel',
+    'babel==2.0',
     'blinker',
     'speaklater',
     'Flask-Babel>=0.9',
