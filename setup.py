@@ -105,7 +105,7 @@ install_requires = [
     'pytz',
     'flask>=0.10',
     'flask-wtf',
-    'babel',
+    'babel==2.0',  # TODO: unfreeze, when stable version is released
     'blinker',
     'speaklater',
     'Flask-Babel>=0.9',
