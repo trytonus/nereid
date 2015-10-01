@@ -1,12 +1,6 @@
 Nereid for Tryton
 =================
 
-.. image:: https://secure.travis-ci.org/openlabs/nereid.png?branch=develop
-  :target: https://travis-ci.org/openlabs/nereid
-
-.. image:: https://coveralls.io/repos/openlabs/nereid/badge.png
-  :target: https://coveralls.io/r/openlabs/nereid
-
 Nereid is a web framework built over Flask, with Tryton as an ORM.
 
 Copyright
@@ -28,7 +22,7 @@ From PyPI using pip::
 
 Using github repository::
 
-    git clone git@github.com:openlabs/nereid.git
+    git clone git@github.com:fulfilio/nereid.git
     cd nereid
     python setup.py install
 
@@ -123,7 +117,7 @@ the dependencies too.
 
 ::
 
-    $ git clone git://github.com/openlabs/nereid.git
+    $ git clone git://github.com/fulfilio/nereid.git
     $ cd nereid
     $ python setup.py install
 
@@ -148,20 +142,3 @@ The initial goal was to build an e-commerce system over OpenERP/Odoo
 called Callisto, and we did! It worked, but never scaled on OpenERP.
 The license sucked (surprise)! and then we saw that most issues we saw
 with OpenERP don't exist in Tryton. And, we were right.
-
-If you want to know more about why we made these design decisions, 
-feel free to drop us a mail
-
-Authors and Contributors
-````````````````````````
-
-Nereid was built at `Openlabs <http://www.openlabs.co.in>`_. It's now 
-opensource, feel free to fork and contribute! Hate us! Just fork You 
-can get hold of @openlabsindia or @sharoonthomas if you have some 
-techy questions to drill with.
-
-Support or Contact
-``````````````````
-
-Having trouble with Nereid? Check out the documentation at TODO or 
-contact sales@openlabs.co.in and we’ll help you sort it out.
