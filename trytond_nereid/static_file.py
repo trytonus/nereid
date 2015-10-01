@@ -183,7 +183,7 @@ class NereidStaticFile(ModelSQL, ModelView):
 
         :param value: The value to set
         """
-        file_binary = buffer(value)
+        file_binary = fields.Binary.cast(bytes(value))
         # If the folder does not exist, create it recursively
         directory = os.path.dirname(self.file_path)
         if not os.path.isdir(directory):
@@ -209,11 +209,11 @@ class NereidStaticFile(ModelSQL, ModelView):
         file system, coverts it to buffer and returns it.
 
         :param name: Field name
-        :return: File buffer
+        :return: Bytes
         '''
         location = self.file_path
         with open(location, 'rb') as file_reader:
-            return buffer(file_reader.read())
+            return fields.Binary.cast(file_reader.read())
 
     def get_file_path(self, name):
         """
