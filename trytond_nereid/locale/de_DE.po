@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -22,10 +22,6 @@ msgid "The Name of the Static File must be unique in a folder.!"
 msgstr ""
 "Der Name einer Statischen Datei kann nur einmal in einem Verzeichnis "
 "vergeben werden."
-
-msgctxt "error:nereid.static.folder:"
-msgid "Folder name cannot be changed"
-msgstr "Verzeichnisname kann nicht geändert werden."
 
 msgctxt "error:nereid.static.folder:"
 msgid "Folder name needs to be unique"
@@ -151,6 +147,10 @@ msgctxt "field:nereid.static.file,id:"
 msgid "ID"
 msgstr "ID"
 
+msgctxt "field:nereid.static.file,mimetype:"
+msgid "Mimetype"
+msgstr "MIME-Typ"
+
 msgctxt "field:nereid.static.file,name:"
 msgid "File Name"
 msgstr "Dateiname"
@@ -159,13 +159,9 @@ msgctxt "field:nereid.static.file,rec_name:"
 msgid "Name"
 msgstr "Name"
 
-msgctxt "field:nereid.static.file,remote_path:"
-msgid "Remote File"
-msgstr "Entfernte Datei"
-
-msgctxt "field:nereid.static.file,type:"
-msgid "File Type"
-msgstr "Dateityp"
+msgctxt "field:nereid.static.file,sequence:"
+msgid "Sequence"
+msgstr "Reihenfolge"
 
 msgctxt "field:nereid.static.file,url:"
 msgid "URL"
@@ -195,17 +191,21 @@ msgctxt "field:nereid.static.folder,files:"
 msgid "Files"
 msgstr "Dateien"
 
-msgctxt "field:nereid.static.folder,name:"
-msgid "Name"
-msgstr "Name"
-
 msgctxt "field:nereid.static.folder,id:"
 msgid "ID"
 msgstr "ID"
 
+msgctxt "field:nereid.static.folder,name:"
+msgid "Name"
+msgstr "Name"
+
 msgctxt "field:nereid.static.folder,rec_name:"
 msgid "Name"
 msgstr "Name"
+
+msgctxt "field:nereid.static.folder,type:"
+msgid "File Type"
+msgstr "Dateityp"
 
 msgctxt "field:nereid.static.folder,write_date:"
 msgid "Write Date"
@@ -317,7 +317,7 @@ msgstr "Standardlokalisierung"
 
 msgctxt "field:nereid.website,guest_user:"
 msgid "Guest user"
-msgstr "Gastnutzer"
+msgstr "Gastbenutzer"
 
 msgctxt "field:nereid.website,id:"
 msgid "ID"
@@ -484,8 +484,8 @@ msgid "Write User"
 msgstr "Letzte Änderung durch"
 
 msgctxt "field:party.party,nereid_users:"
-msgid "Nereid Users"
-msgstr "Nereid Benutzer"
+msgid "Web Users"
+msgstr "Webbenutzer"
 
 msgctxt "help:ir.translation,comments:"
 msgid "Comments/Hints for translator"
@@ -501,7 +501,7 @@ msgstr "Websites"
 
 msgctxt "model:ir.action,name:act_website_locale_form"
 msgid "Web Sites Locale"
-msgstr "Lokalisierung Websites"
+msgstr "Websitelokalisierung"
 
 msgctxt "model:ir.action,name:action_nereid_static_file_view"
 msgid "Nereid Static Files"
@@ -512,8 +512,8 @@ msgid "Nereid Static Folders"
 msgstr "Nereid Statische Verzeichnisse"
 
 msgctxt "model:ir.action,name:action_nereid_user_view"
-msgid "Nereid User"
-msgstr "Nereid Benutzer"
+msgid "Web User"
+msgstr "Webbenutzer"
 
 msgctxt ""
 "model:ir.action.act_window.domain,name:action_nereid_user_view_domain_active"
@@ -533,33 +533,37 @@ msgctxt "model:ir.trigger,name:trigger_clear_cache_website"
 msgid "Clear Cache when website changes"
 msgstr "Cache löschen bei Änderung der Website"
 
+msgctxt "model:ir.ui.menu,name:"
+msgid "Routing"
+msgstr "Routing"
+
+msgctxt "model:ir.ui.menu,name:menu_files"
+msgid "Files"
+msgstr "Dateien"
+
 msgctxt "model:ir.ui.menu,name:menu_nereid"
 msgid "Nereid"
 msgstr "Nereid"
 
 msgctxt "model:ir.ui.menu,name:menu_nereid_config_static_file"
-msgid "Static Files"
-msgstr "Statische Dateien"
+msgid "Files"
+msgstr "Dateien"
 
 msgctxt "model:ir.ui.menu,name:menu_nereid_config_static_folder"
-msgid "Static Folders"
-msgstr "Statische Verzeichnisse "
+msgid "Folders"
+msgstr "Verzeichnisse "
 
 msgctxt "model:ir.ui.menu,name:menu_nereid_configuration"
 msgid "Configuration"
 msgstr "Einstellungen"
-
-msgctxt "model:ir.ui.menu,name:menu_nereid_routing"
-msgid "Routing"
-msgstr "Routing"
 
 msgctxt "model:ir.ui.menu,name:menu_nereid_user"
 msgid "Users"
 msgstr "Benutzer"
 
 msgctxt "model:ir.ui.menu,name:menu_nereid_user1"
-msgid "Nereid Users"
-msgstr "Nereid Benutzer"
+msgid "Web Users"
+msgstr "Webbenutzer"
 
 msgctxt "model:ir.ui.menu,name:menu_website_form"
 msgid "Web Sites"
@@ -567,7 +571,7 @@ msgstr "Websites"
 
 msgctxt "model:ir.ui.menu,name:menu_website_locale_form"
 msgid "Web Sites Locale"
-msgstr "Lokalisierung Websites"
+msgstr "Websitelokalisierung"
 
 msgctxt "model:nereid.permission,name:"
 msgid "Nereid Permissions"
@@ -591,7 +595,7 @@ msgstr "Nereid Benutzer"
 
 msgctxt "model:nereid.user.anonymous,name:"
 msgid "Nereid Anonymous User Object"
-msgstr "Nereid AnonymerBenutzer-Objekt"
+msgstr "Nereid Anonymer Benutzer Objekt"
 
 msgctxt "model:nereid.website,name:"
 msgid "One of the most powerful features of Nereid is the ability to"
@@ -615,7 +619,7 @@ msgstr "Nereid Konfiguration"
 
 msgctxt "model:nereid.website.locale,name:"
 msgid "Web Site Locale"
-msgstr "Website-Lokalisierung"
+msgstr "Websitelokalisierung"
 
 msgctxt "model:res.group,name:group_nereid_admin"
 msgid "Nereid Administration"
@@ -623,199 +627,188 @@ msgstr "Administration Nereid"
 
 msgctxt "model:res.user,name:web_user"
 msgid "Nereid Web User"
-msgstr "Nereid Web-Benutzer"
+msgstr "Nereid Webbenutzer"
 
-msgctxt "nereid:party.py:"
+msgctxt "nereid:party.py:255"
 msgid "Address has been deleted successfully!"
-msgstr "Adresse erfolgreich entfernt!"
+msgstr "Adresse erfolgreich entfernt."
 
-msgctxt "nereid:party.py:"
-msgid "City"
-msgstr "Stadt"
-
-msgctxt "nereid:party.py:"
-msgid "Country"
-msgstr "Staat"
-
-msgctxt "nereid:party.py:"
-msgid "Email"
-msgstr "E-Mail"
-
-msgctxt "nereid:party.py:"
+msgctxt "nereid:party.py:26"
 msgid "Name"
 msgstr "Name"
 
-msgctxt "nereid:party.py:"
-msgid "Phone"
-msgstr "Telefon"
-
-msgctxt "nereid:party.py:"
-msgid "Post Code"
-msgstr "Postleitzahl"
-
-msgctxt "nereid:party.py:"
-msgid "State/County"
-msgstr "Land/Gegend"
-
-msgctxt "nereid:party.py:"
+msgctxt "nereid:party.py:27"
 msgid "Street"
 msgstr "Anschrift 1"
 
-msgctxt "nereid:party.py:"
+msgctxt "nereid:party.py:28"
 msgid "Street (Bis)"
 msgstr "Anschrift 2"
 
-msgctxt "nereid:tests/test_i18n.py:"
-msgid "%(num)d apple"
-msgstr "%(num)d apple"
+msgctxt "nereid:party.py:29"
+msgid "Post Code"
+msgstr "Postleitzahl"
 
-msgctxt "nereid:tests/test_i18n.py:"
-msgid "Hi %(name)s"
-msgstr "Hallo %(name)s"
+msgctxt "nereid:party.py:30"
+msgid "City"
+msgstr "Stadt"
 
-msgctxt "nereid:tests/test_i18n.py:"
+msgctxt "nereid:party.py:31"
+msgid "Country"
+msgstr "Staat"
+
+msgctxt "nereid:party.py:32"
+msgid "State/County"
+msgstr "Land/Gegend"
+
+msgctxt "nereid:party.py:33"
+msgid "Email"
+msgstr "E-Mail"
+
+msgctxt "nereid:party.py:34"
+msgid "Phone"
+msgstr "Telefon"
+
+msgctxt "nereid:tests/test_i18n.py:127"
 msgid "en_US"
-msgstr "en_US"
+msgstr ""
 
-msgctxt "nereid:tests/test_i18n.py:"
+msgctxt "nereid:tests/test_i18n.py:157"
+msgid "Hi %(name)s"
+msgstr ""
+
+msgctxt "nereid:tests/test_i18n.py:186"
+msgid "%(num)d apple"
+msgstr ""
+
+msgctxt "nereid:tests/test_i18n.py:186"
+msgid "%(num)d apples"
+msgstr ""
+
+msgctxt "nereid:tests/test_i18n.py:187"
+msgid "%(num)d apple"
+msgstr ""
+
+msgctxt "nereid:tests/test_i18n.py:187"
+msgid "%(num)d apples"
+msgstr ""
+
+msgctxt "nereid:tests/test_i18n.py:249"
 msgid "name"
-msgstr "Name"
+msgstr ""
 
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:385"
 msgid ""
 "A registration already exists with this email. Please contact customer care"
 msgstr ""
 "Es existiert bereits eine Registrierung mit dieser E-Mailadresse. Bitte "
 "setzen Sie sich mit dem Kundensupport in Verbindung."
 
-msgctxt "nereid:user.py:"
-msgid "Account Activation"
-msgstr "Kontoaktivierung"
-
-msgctxt "nereid:user.py:"
-msgid "Account Password Reset"
-msgstr "Kontopasswort zurücksetzen"
-
-msgctxt "nereid:user.py:"
-msgid "An email has been sent to your account for resetting your credentials"
-msgstr ""
-"Eine E-Mail zur Rücksetzung Ihres Passworts wurde an Ihr E-Mailkonto "
-"gesendet."
-
-msgctxt "nereid:user.py:"
-msgid "Confirm Password"
-msgstr "Passwort bestätigen"
-
-msgctxt "nereid:user.py:"
-msgid "Form has errors"
-msgstr "Das Formular weist Fehler auf."
-
-msgctxt "nereid:user.py:"
-msgid "Invalid Activation Code"
-msgstr "Ungültiger Aktivierungscode"
-
-msgctxt "nereid:user.py:"
-msgid "Invalid email address"
-msgstr "Ungültige E-Mailadresse"
-
-msgctxt "nereid:user.py:"
-msgid "Invalid reset password code"
-msgstr "Ungültiger Passwortrücksetzungscode"
-
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:41"
 msgid "Name"
 msgstr "Name"
 
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:414"
+msgid "Registration Complete. Check your email for activation"
+msgstr ""
+"Registrierung abgeschlossen. Bitte überprüfen Sie Ihre E-Mails für den "
+"Aktivierungscode."
+
+msgctxt "nereid:user.py:42"
+msgid "e-mail"
+msgstr "E-Mail"
+
+msgctxt "nereid:user.py:427"
+msgid "Form has errors"
+msgstr "Das Formular weist Fehler auf."
+
+msgctxt "nereid:user.py:43"
 msgid "New Password"
 msgstr "Neues Passwort"
 
-msgctxt "nereid:user.py:"
-msgid "Old Password"
-msgstr "Altes Passwort"
+msgctxt "nereid:user.py:443"
+msgid "Account Activation"
+msgstr "Kontoaktivierung"
 
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:45"
 msgid "Passwords must match"
 msgstr "Passworte müssen übereinstimmen"
 
-msgctxt "nereid:user.py:"
-msgid "Registration Complete. Check your email for activation"
-msgstr ""
-"Registrierung abgeschlossen. Überprüfen Sie Ihre E-Mails für den "
-"Aktivierungscode."
+msgctxt "nereid:user.py:46"
+msgid "Confirm Password"
+msgstr "Passwort bestätigen"
 
-msgctxt "nereid:user.py:"
-msgid "Repeat Password"
-msgstr "Passwort wiederholen"
+msgctxt "nereid:user.py:532"
+msgid "Passwords must match"
+msgstr "Passworte müssen übereinstimmen"
 
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:558"
 msgid "The activation link has expired"
 msgstr "Der Aktivierungslink ist abgelaufen."
 
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:560"
 msgid "The activation token is invalid!"
 msgstr "Der Aktivierungstoken ist ungültig."
 
-msgctxt "nereid:user.py:"
-msgid "The current password you entered is invalid"
-msgstr "Das eingegebene Passwort ist ungültig."
-
-msgctxt "nereid:user.py:"
-msgid "The password reset link has expired"
-msgstr "Der Passwortrücksetzungslink ist abgelaufen."
-
-msgctxt "nereid:user.py:"
-msgid "The verification link has expired"
-msgstr "Der Verifizierungslink ist abgelaufen."
-
-msgctxt "nereid:user.py:"
-msgid "The verification token is invalid!"
-msgstr "Der Verifizierungstoken ist ungültig."
-
-msgctxt "nereid:user.py:"
+msgctxt "nereid:user.py:566"
 msgid "Your account has been activated. Please login now."
 msgstr "Ihr Konto wurde aktiviert. Bitte melden Sie sich jetzt an."
 
-msgctxt "nereid:user.py:"
-msgid "Your email has been verified!"
-msgstr "Ihre E-Mailadresse wurde verifiziert."
+msgctxt "nereid:user.py:568"
+msgid "Invalid Activation Code"
+msgstr "Ungültiger Aktivierungscode"
 
-msgctxt "nereid:user.py:"
-msgid "Your password has been successfully changed! Please login again"
-msgstr ""
-"Ihr Passwort wurde erfolgreich geändert. Bitte melden Sie sich neu an."
+msgctxt "nereid:user.py:605"
+msgid "Invalid email address."
+msgstr "Ungültige E-Mailadresse"
 
-msgctxt "nereid:user.py:"
-msgid "e-mail"
-msgstr "E-Mail"
+msgctxt "nereid:user.py:61"
+msgid "New Password"
+msgstr "Neues Passwort"
 
-msgctxt "nereid:website.py:"
-msgid "Invalid login credentials"
-msgstr "Ungültige Logindaten"
+msgctxt "nereid:user.py:619"
+msgid "Account Password Reset"
+msgstr "Kontopasswort zurücksetzen"
 
-msgctxt "nereid:website.py:"
-msgid "Password"
-msgstr "Passwort"
+msgctxt "nereid:user.py:63"
+msgid "Passwords must match"
+msgstr "Passworte müssen übereinstimmen"
 
-msgctxt "nereid:website.py:"
-msgid "Remember me"
-msgstr "An mich erinnern"
+msgctxt "nereid:user.py:64"
+msgid "Repeat Password"
+msgstr "Passwort wiederholen"
 
-msgctxt "nereid:website.py:"
+msgctxt "nereid:user.py:71"
+msgid "Old Password"
+msgstr "Altes Passwort"
+
+msgctxt "nereid:website.py:207"
 msgid "You are now logged in. Welcome %(name)s"
 msgstr "Sie sind nun angemeldet. Willkommen %(name)s"
 
-msgctxt "nereid:website.py:"
-msgid "You have been logged out successfully. Thanks for visiting us"
-msgstr "Sie sind erfolgreich abgemeldet worden. Danke für Ihren Besuch!"
-
-msgctxt "nereid:website.py:"
+msgctxt "nereid:website.py:222"
 msgid "Your account has not been activated yet!"
 msgstr "Ihr Konto wurde noch nicht aktiviert."
 
-msgctxt "nereid:website.py:"
+msgctxt "nereid:website.py:224"
+msgid "Invalid login credentials"
+msgstr "Ungültige Logindaten"
+
+msgctxt "nereid:website.py:241"
+msgid "You have been logged out successfully. Thanks for visiting us"
+msgstr "Sie sind erfolgreich abgemeldet worden. Danke für Ihren Besuch!"
+
+msgctxt "nereid:website.py:32"
 msgid "e-mail"
 msgstr "E-Mail"
+
+msgctxt "nereid:website.py:33"
+msgid "Password"
+msgstr "Passwort"
+
+msgctxt "nereid:website.py:34"
+msgid "Remember me"
+msgstr "Angemeldet bleiben"
 
 msgctxt "selection:ir.translation,type:"
 msgid "Nereid Code"
@@ -829,13 +822,9 @@ msgctxt "selection:ir.translation,type:"
 msgid "WTforms built-in Messages"
 msgstr "WTforms eingebaute Nachrichten"
 
-msgctxt "selection:nereid.static.file,type:"
+msgctxt "selection:nereid.static.folder,type:"
 msgid "Local File"
 msgstr "Lokale Datei"
-
-msgctxt "selection:nereid.static.file,type:"
-msgid "Remote File"
-msgstr "Entfernte Datei"
 
 msgctxt "view:nereid.static.file:"
 msgid "Paths"
@@ -854,28 +843,28 @@ msgid "Static Folder"
 msgstr "Statisches Verzeichnis "
 
 msgctxt "view:nereid.user:"
-msgid "Nereid User"
-msgstr "Nereid Benutzer"
-
-msgctxt "view:nereid.user:"
 msgid "Permissions"
 msgstr "Berechtigungen"
 
+msgctxt "view:nereid.user:"
+msgid "Web User"
+msgstr "Webbenutzer"
+
 msgctxt "view:nereid.website.config.start:"
 msgid "Create Nereid Website"
-msgstr "Nereid-Website erstellen"
+msgstr "Website erstellen"
 
 msgctxt "view:nereid.website.config.start:"
 msgid "You can now add nereid website into the system."
-msgstr "Sie können nun eine Nereid Website zum System hinzufügen."
+msgstr "Sie können nun eine Website zum System hinzufügen."
 
 msgctxt "view:nereid.website.locale:"
 msgid "Web Site Locale"
-msgstr "Website-Lokalisierung"
+msgstr "Websitelokalisierung"
 
 msgctxt "view:nereid.website.locale:"
 msgid "Web Sites Locale"
-msgstr "Lokalisierung Websites"
+msgstr "Websitelokalisierung"
 
 msgctxt "view:nereid.website:"
 msgid "Configuration"
@@ -906,8 +895,8 @@ msgid "Nereid"
 msgstr "Nereid"
 
 msgctxt "view:party.party:"
-msgid "Nereid Users"
-msgstr "Nereid Benutzer"
+msgid "Web Users"
+msgstr "Webbenutzer"
 
 msgctxt "wizard_button:nereid.website.config,start,end:"
 msgid "Cancel"
@@ -925,162 +914,202 @@ msgctxt "wizard_button:nereid.website.config,website,end:"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-msgctxt "wtforms:ext/appengine/fields.py:"
-msgid "Not a valid choice"
-msgstr "Ungültige Auswahl"
-
-msgctxt "wtforms:ext/appengine/fields.py:"
-msgid "Not a valid integer list"
-msgstr "Ungültige Ganzzahlliste"
-
-msgctxt "wtforms:ext/appengine/fields.py:"
-msgid "Not a valid list"
-msgstr "Ungültige Liste"
-
-msgctxt "wtforms:ext/csrf/form.py:"
+msgctxt "wtforms:csrf/core.py:98"
 msgid "Invalid CSRF Token"
-msgstr "Websiteübergreifende Anfragenfälschung (CSFR) Token ungültig"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) ungültig"
 
-msgctxt "wtforms:ext/csrf/session.py:"
+msgctxt "wtforms:csrf/session.py:61"
+msgid "CSRF token missing"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) fehlt"
+
+msgctxt "wtforms:csrf/session.py:69"
 msgid "CSRF failed"
 msgstr "Websiteübergreifende Anfragenfälschung (CSFR) fehlgeschlagen"
 
-msgctxt "wtforms:ext/csrf/session.py:"
+msgctxt "wtforms:csrf/session.py:74"
 msgid "CSRF token expired"
-msgstr "Websiteübergreifende Anfragenfälschung (CSFR) Token verfallen"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) ist verfallen"
 
-msgctxt "wtforms:ext/csrf/session.py:"
+msgctxt "wtforms:ext/appengine/fields.py:164"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:ext/appengine/fields.py:166"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:ext/appengine/fields.py:185"
+msgid "Not a valid list"
+msgstr "Ungültige Liste"
+
+msgctxt "wtforms:ext/appengine/fields.py:204"
+msgid "Not a valid integer list"
+msgstr "Ungültige Ganzzahlliste"
+
+msgctxt "wtforms:ext/appengine/fields.py:87"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:ext/csrf/form.py:47"
+msgid "Invalid CSRF Token"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) ungültig"
+
+msgctxt "wtforms:ext/csrf/session.py:58"
 msgid "CSRF token missing"
-msgstr "Websiteübergreifende Anfragenfälschung (CSFR) fehlend"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) fehlt"
 
-msgctxt "wtforms:ext/dateutil/fields.py:"
-msgid "Invalid date/time input"
-msgstr "Ungültige Eingabe von Datum/Zeit"
+msgctxt "wtforms:ext/csrf/session.py:66"
+msgid "CSRF failed"
+msgstr "Websiteübergreifende Anfragenfälschung (CSFR) fehlgeschlagen"
 
-msgctxt "wtforms:ext/dateutil/fields.py:"
+msgctxt "wtforms:ext/csrf/session.py:71"
+msgid "CSRF token expired"
+msgstr "Token für Websiteübergreifende Anfragenfälschung (CSFR) ist verfallen"
+
+msgctxt "wtforms:ext/dateutil/fields.py:63"
 msgid "Please input a date/time value"
 msgstr "Bitte einen Wert für Datum/Zeit eingeben."
 
-msgctxt "wtforms:ext/django/fields.py:"
+msgctxt "wtforms:ext/dateutil/fields.py:75"
+msgid "Invalid date/time input"
+msgstr "Ungültige Eingabe von Datum/Zeit"
+
+msgctxt "wtforms:ext/dateutil/fields.py:83"
+msgid "Invalid date/time input"
+msgstr "Ungültige Eingabe von Datum/Zeit"
+
+msgctxt "wtforms:ext/django/fields.py:95"
 msgid "Not a valid choice"
 msgstr "Ungültige Auswahl"
 
-msgctxt "wtforms:ext/sqlalchemy/fields.py:"
+msgctxt "wtforms:ext/sqlalchemy/fields.py:125"
 msgid "Not a valid choice"
 msgstr "Ungültige Auswahl"
 
-msgctxt "wtforms:ext/sqlalchemy/validators.py:"
-msgid "Already exists."
-msgstr "Existiert bereits."
+msgctxt "wtforms:ext/sqlalchemy/fields.py:127"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
 
-msgctxt "wtforms:fields/core.py:"
+msgctxt "wtforms:ext/sqlalchemy/fields.py:180"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:ext/sqlalchemy/fields.py:185"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:fields/core.py:461"
+msgid "Invalid Choice: could not coerce"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:fields/core.py:468"
+msgid "Not a valid choice"
+msgstr "Ungültige Auswahl"
+
+msgctxt "wtforms:fields/core.py:494"
+msgid "Invalid choice(s): one or more data inputs could not be coerced"
+msgstr "Ungültige Auswahl für eine oder mehrere Eingaben"
+
+msgctxt "wtforms:fields/core.py:501"
 msgid "'%(value)s' is not a valid choice for this field"
 msgstr "'%(value)s' ist keine gültige Auswahl für dieses Feld."
 
-msgctxt "wtforms:fields/core.py:"
-msgid "Invalid Choice: could not coerce"
-msgstr "Ungültige Auswahl: konnte nicht erzwungen werden."
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Invalid choice(s): one or more data inputs could not be coerced"
-msgstr "Ungültige Auswahl: eine oder mehrere Eingaben."
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Not a valid choice"
-msgstr "Ungültige Auswahl"
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Not a valid date value"
-msgstr "Ungültiger Wert für Datum"
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Not a valid datetime value"
-msgstr "Ungültiger Wert für Datum/Zeit"
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Not a valid decimal value"
-msgstr "Ungültiger Wert für Dezimalzahl"
-
-msgctxt "wtforms:fields/core.py:"
-msgid "Not a valid float value"
-msgstr "Ungültiger Wert für Fließkommazahl"
-
-msgctxt "wtforms:fields/core.py:"
+msgctxt "wtforms:fields/core.py:584"
 msgid "Not a valid integer value"
 msgstr "Ungültiger Wert für Ganzzahl"
 
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:fields/core.py:650"
+msgid "Not a valid decimal value"
+msgstr "Ungültiger Wert für Dezimalzahl"
+
+msgctxt "wtforms:fields/core.py:677"
+msgid "Not a valid float value"
+msgstr "Ungültiger Wert für Fließkommazahl"
+
+msgctxt "wtforms:fields/core.py:736"
+msgid "Not a valid datetime value"
+msgstr "Ungültiger Wert für Zeit"
+
+msgctxt "wtforms:fields/core.py:753"
+msgid "Not a valid date value"
+msgstr "Ungültiger Wert für Datum"
+
+msgctxt "wtforms:validators.py:100"
 msgid "Field cannot be longer than %(max)d character."
 msgstr "Feld kann nicht mehr als %(max)d Zeichen enthalten."
 
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:100"
 msgid "Field cannot be longer than %(max)d characters."
 msgstr "Feld kann nicht mehr als %(max)d Zeichen enthalten."
 
-msgctxt "wtforms:validators.py:"
-msgid "Field must be at least %(min)d character long."
-msgstr "Feld muss mindestens %(min)d Zeichen enthalten."
-
-msgctxt "wtforms:validators.py:"
-msgid "Field must be at least %(min)d characters long."
-msgstr "Feld muss mindestens %(min)d Zeichen enthalten."
-
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:103"
 msgid "Field must be between %(min)d and %(max)d characters long."
 msgstr "Feld muss zwischen %(min)d und %(max)d Zeichen enthalten."
 
-msgctxt "wtforms:validators.py:"
-msgid "Field must be equal to %(other_name)s."
-msgstr "Feld muss gleich wie %(other_name)s sein."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid IP address."
-msgstr "Ungültige IP-Adresse."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid Mac address."
-msgstr "Ungültige MAC-Adresse"
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid URL."
-msgstr "Ungültige URL."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid UUID."
-msgstr "Ungültige UUID."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid email address."
-msgstr "Ungültige E-Mailadresse"
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid field name '%s'."
-msgstr "Ungültiger Feldname '%s'."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid input."
-msgstr "Ungültige Eingabe."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid value, can't be any of: %(values)s."
-msgstr "Ungültiger Wert, kann keiner der Folgenden sein: %(values)s."
-
-msgctxt "wtforms:validators.py:"
-msgid "Invalid value, must be one of: %(values)s."
-msgstr "Ungültiger Wert, muss einer der Folgenden sein: %(values)s."
-
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:139"
 msgid "Number must be at least %(min)s."
 msgstr "Nummer muss mindestens %(min)s lang sein."
 
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:141"
 msgid "Number must be at most %(max)s."
 msgstr "Nummer darf höchstens %(max)s lang sein."
 
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:143"
 msgid "Number must be between %(min)s and %(max)s."
 msgstr "Nummer muss zwischen %(min)s und %(max)s lang sein."
 
-msgctxt "wtforms:validators.py:"
+msgctxt "wtforms:validators.py:203"
 msgid "This field is required."
 msgstr "Dieses Feld ist erforderlich."
+
+msgctxt "wtforms:validators.py:243"
+msgid "This field is required."
+msgstr "Dieses Feld ist erforderlich."
+
+msgctxt "wtforms:validators.py:275"
+msgid "Invalid input."
+msgstr "Ungültige Eingabe"
+
+msgctxt "wtforms:validators.py:301"
+msgid "Invalid email address."
+msgstr "Ungültige E-Mailadresse"
+
+msgctxt "wtforms:validators.py:335"
+msgid "Invalid IP address."
+msgstr "Ungültige IP-Adresse"
+
+msgctxt "wtforms:validators.py:386"
+msgid "Invalid Mac address."
+msgstr "Ungültige MAC-Adresse"
+
+msgctxt "wtforms:validators.py:415"
+msgid "Invalid URL."
+msgstr "Ungültige URL"
+
+msgctxt "wtforms:validators.py:436"
+msgid "Invalid UUID."
+msgstr "Ungültige UUID"
+
+msgctxt "wtforms:validators.py:464"
+msgid "Invalid value, must be one of: %(values)s."
+msgstr "Ungültiger Wert. Es muss einer der Folgenden sein: %(values)s."
+
+msgctxt "wtforms:validators.py:496"
+msgid "Invalid value, can't be any of: %(values)s."
+msgstr "Ungültiger Wert. Keiner der Folgenden ist gültig: %(values)s."
+
+msgctxt "wtforms:validators.py:56"
+msgid "Invalid field name '%s'."
+msgstr "Ungültiger Feldname '%s'."
+
+msgctxt "wtforms:validators.py:64"
+msgid "Field must be equal to %(other_name)s."
+msgstr "Feld muss gleich wie %(other_name)s sein."
+
+msgctxt "wtforms:validators.py:97"
+msgid "Field must be at least %(min)d character long."
+msgstr "Feld muss mindestens %(min)d Zeichen enthalten."
+
+msgctxt "wtforms:validators.py:97"
+msgid "Field must be at least %(min)d characters long."
+msgstr "Feld muss mindestens %(min)d Zeichen enthalten."
