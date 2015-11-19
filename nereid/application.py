@@ -34,6 +34,7 @@ from .ctx import RequestContext
 from .csrf import NereidCsrfProtect
 from .signals import transaction_start, transaction_stop
 from .routing import Rule
+from .globals import current_locale, current_website
 
 
 class Nereid(Flask):
@@ -427,20 +428,12 @@ class Nereid(Flask):
             Cache.resets(self.database_name)
 
         with Transaction().start(self.database_name, 0, readonly=True):
-            Website = Pool().get('nereid.website')
-            website = Website.get_from_host(req.host)
-
-            user = website.application_user.id
-            website_context = website.get_context()
+            user = current_website.application_user.id
+            website_context = current_website.get_context()
             website_context.update({
-                'company': website.company.id,
+                'company': current_website.company.id,
             })
-
-            language = 'en_US'
-            if website:
-                # If this is a request specific to a website
-                # then take the locale from the website
-                language = website.get_current_locale(req).language.code
+            language = current_locale.language.code
 
         # pop locale if specified in the view_args
         req.view_args.pop('locale', None)
@@ -528,7 +521,11 @@ class Nereid(Flask):
         rv.filters.update(**NEREID_TEMPLATE_FILTERS)
 
         # add the locale sensitive url_for of nereid
-        rv.globals.update(url_for=url_for)
+        rv.globals.update(
+            url_for=url_for,
+            current_locale=current_locale,
+            current_website=current_website,
+        )
 
         if self.cache:
             # Setup the bytecode cache

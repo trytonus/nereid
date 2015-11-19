@@ -10,7 +10,7 @@ from wtforms import TextField, PasswordField, validators, BooleanField
 from flask.ext.login import login_user, logout_user
 
 from nereid import jsonify, flash, render_template, url_for, cache, \
-    current_user, route
+    current_user, route, current_website
 from nereid.globals import request
 from nereid.exceptions import WebsiteNotFound
 from nereid.helpers import login_required, key_from_list, get_flashed_messages
@@ -147,7 +147,7 @@ class WebSite(ModelSQL, ModelView):
         """
         return jsonify(result=[
             {'key': c.id, 'value': c.name}
-            for c in request.nereid_website.countries
+            for c in current_website.countries
         ])
 
     @classmethod
@@ -159,7 +159,7 @@ class WebSite(ModelSQL, ModelView):
         Subdivision = Pool().get('country.subdivision')
 
         country = int(request.args.get('country', 0))
-        if country not in [c.id for c in request.nereid_website.countries]:
+        if country not in [c.id for c in current_website.countries]:
             abort(404)
         subdivisions = Subdivision.search([('country', '=', country)])
         return jsonify(
@@ -266,8 +266,8 @@ class WebSite(ModelSQL, ModelView):
         data into the context
         """
         return dict(
-            user=request.nereid_user,
-            party=request.nereid_user.party,
+            user=current_user,
+            party=current_user.party,
         )
 
     @classmethod
@@ -317,7 +317,7 @@ class WebSite(ModelSQL, ModelView):
         else:
             rv.update({
                 'logged_in': True,
-                'name': request.nereid_user.display_name
+                'name': current_user.display_name
             })
         return rv
 

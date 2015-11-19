@@ -17,5 +17,5 @@ from .helpers import flash, get_flashed_messages, url_for, \
     context_processor, template_filter
 from .application import Nereid, Request, Response
 from .sessions import Session
-from .globals import cache, current_user
+from .globals import cache, current_user, current_locale, current_website
 from .templating import render_template, render_email, LazyRenderer

@@ -8,7 +8,7 @@ from nereid.sessions import Session
 from nereid.contrib.locale import Babel
 from werkzeug.contrib.sessions import FilesystemSessionStore
 
-from nereid import Nereid
+from nereid import Nereid, current_app
 from flask.globals import _request_ctx_stack
 
 
@@ -45,6 +45,7 @@ class NereidTestApp(Nereid):
         """
         Skip the transaction handling and call the _dispatch_request
         """
+
         req = _request_ctx_stack.top.request
         if req.routing_exception is not None:
             self.raise_routing_exception(req)
@@ -56,17 +57,18 @@ class NereidTestApp(Nereid):
            and req.method == 'OPTIONS':
             return self.make_default_options_response()
 
-        language = 'en_US'
-        if req.nereid_website:
-            # If this is a request specific to a website
-            # then take the locale from the website
-            language = req.nereid_locale.language.code
+        Website = current_app.pool.get('nereid.website')
+        website = Website.get_from_host(req.host)
+        locale = website.get_current_locale(req)
+
+        _request_ctx_stack.top.website = website.id
+        _request_ctx_stack.top.locale = locale.id
 
         # pop locale if specified in the view_args
         req.view_args.pop('locale', None)
         active_id = req.view_args.pop('active_id', None)
 
-        return self._dispatch_request(req, language, active_id)
+        return self._dispatch_request(req, locale.language.code, active_id)
 
 
 def get_app(**options):
