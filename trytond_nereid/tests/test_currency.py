@@ -98,7 +98,7 @@ class TestCurrency(NereidTestCase):
             'currencies': [('add', self.website_currencies)],
         }])
         self.templates = {
-            'home.jinja': '{{ request.nereid_currency.id }}',
+            'home.jinja': '{{ current_locale.currency.id }}',
         }
 
     def get_template_source(self, name):

@@ -1,7 +1,7 @@
 # This file is part of Tryton.  The COPYRIGHT file at the top level of
 # this repository contains the full copyright notices and license terms.
 from trytond.model import ModelView, ModelSQL
-from nereid import request, context_processor
+from nereid import context_processor, current_website, current_locale
 
 __all__ = ['Currency']
 
@@ -18,9 +18,9 @@ class Currency(ModelSQL, ModelView):
         session.
         """
         return cls.compute(
-            request.nereid_website.company.currency,
+            current_website.company.currency,
             amount,
-            request.nereid_currency
+            current_locale.currency
         )
 
     @classmethod

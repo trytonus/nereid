@@ -1,12 +1,9 @@
 # This file is part of Tryton & Nereid. The COPYRIGHT file at the top level of
 # this repository contains the full copyright notices and license terms.
-import warnings
-
 from werkzeug._internal import _missing
 from flask.wrappers import Request as RequestBase, Response as ResponseBase
-from flask.ext.login import current_user
 
-from .globals import current_app, request
+from .globals import request
 from .signals import transaction_stop
 
 
@@ -70,43 +67,6 @@ class Request(RequestBase):
         below.
         """
         request.__dictcache__ = {}
-
-    @cached_property
-    def nereid_website(self):
-        """Fetch the Browse Record of current website."""
-        if self.url_rule is None:
-            return None
-        Website = current_app.pool.get('nereid.website')
-        return Website.get_from_host(self.host)
-
-    @cached_property
-    def nereid_user(self):
-        """Fetch the browse record of current user or None."""
-        warnings.warn(
-            "request.nereid_user will be deprecated. "
-            "Use `nereid.current_user` proxy instead.",
-            DeprecationWarning, stacklevel=2
-        )
-        return current_user
-
-    @cached_property
-    def nereid_currency(self):
-        """
-        Return a browse record for the currency.
-        """
-        return self.nereid_locale.currency
-
-    @cached_property
-    def nereid_locale(self):
-        # TODO: Deprecate this and make it a global
-        return self.nereid_website.get_current_locale(self)
-
-    @cached_property
-    def nereid_language(self):
-        """
-        Return a active record for the language.
-        """
-        return self.nereid_locale.language
 
     @property
     def is_json(self):

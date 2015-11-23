@@ -77,7 +77,7 @@ class TestAuth(NereidTestCase):
             'address-edit.jinja': 'Address Edit {{ form.errors }}',
             'address.jinja': '',
             'account.jinja': '',
-            'profile.jinja': '{{ request.nereid_user.display_name }}',
+            'profile.jinja': '{{ current_user.display_name }}',
             'emails/activation-text.jinja': 'activation-email-text',
             'emails/activation-html.jinja': 'activation-email-html',
             'emails/reset-text.jinja': 'reset-email-text',
@@ -693,7 +693,7 @@ class TestAuth(NereidTestCase):
             app = self.get_app()
 
             self.templates['home.jinja'] = """
-            {{ request.nereid_user.get_profile_picture() }}
+            {{ current_user.get_profile_picture() }}
             """
 
             with app.test_client() as c:

@@ -8,7 +8,7 @@ from flask.ext.babel import Babel  # noqa
 from babel import Locale
 from pytz import timezone
 from nereid.globals import _request_ctx_stack
-from nereid import current_user
+from nereid import current_user, current_website, current_locale
 from trytond.pool import Pool
 from trytond.transaction import Transaction
 
@@ -129,7 +129,7 @@ def get_locale():
     if locale is None:
         babel = ctx.app.extensions['babel']
         if babel.locale_selector_func is None:
-            rv = ctx.request.nereid_language.code
+            rv = current_locale.language.code
         else:
             rv = babel.locale_selector_func()
 
@@ -156,8 +156,8 @@ def get_timezone():
         if babel.timezone_selector_func is None:
             if not current_user.is_anonymous and current_user.timezone:
                 tzinfo = timezone(current_user.timezone)
-            elif ctx.request.nereid_website.company.timezone:
-                tzinfo = timezone(ctx.request.nereid_website.company.timezone)
+            elif current_website.company.timezone:
+                tzinfo = timezone(current_website.company.timezone)
             else:
                 tzinfo = babel.default_timezone
         else:
