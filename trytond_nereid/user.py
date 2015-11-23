@@ -18,7 +18,7 @@ from flask.ext.login import logout_user, AnonymousUserMixin, login_url
 from werkzeug import redirect, abort
 
 from nereid import request, url_for, render_template, login_required, flash, \
-    jsonify, route
+    jsonify, route, current_website, current_user
 from nereid.ctx import has_request_context
 from nereid.globals import current_app
 from nereid.signals import registration
@@ -379,7 +379,7 @@ class NereidUser(ModelSQL, ModelView):
             with Transaction().set_context(active_test=False):
                 existing = cls.search([
                     ('email', '=', registration_form.email.data),
-                    ('company', '=', request.nereid_website.company.id),
+                    ('company', '=', current_website.company.id),
                 ])
             if existing:
                 message = _(
@@ -405,7 +405,7 @@ class NereidUser(ModelSQL, ModelView):
                     'display_name': registration_form.name.data,
                     'email': registration_form.email.data,
                     'password': registration_form.password.data,
-                    'company': request.nereid_website.company.id,
+                    'company': current_website.company.id,
                 }
                 )
                 nereid_user.save()
@@ -463,9 +463,9 @@ class NereidUser(ModelSQL, ModelView):
         form = ChangePasswordForm()
 
         if request.method == 'POST' and form.validate():
-            if request.nereid_user.match_password(form.old_password.data):
+            if current_user.match_password(form.old_password.data):
                 cls.write(
-                    [request.nereid_user],
+                    [current_user],
                     {'password': form.password.data}
                 )
                 logout_user()
@@ -585,7 +585,7 @@ class NereidUser(ModelSQL, ModelView):
             try:
                 nereid_user, = cls.search([
                     ('email', '=', form.email.data),
-                    ('company', '=', request.nereid_website.company.id),
+                    ('company', '=', current_website.company.id),
                 ])
             except ValueError:
                 return cls.build_response(
@@ -662,7 +662,7 @@ class NereidUser(ModelSQL, ModelView):
         with Transaction().set_context(active_test=False):
             users = cls.search([
                 ('email', '=', email),
-                ('company', '=', request.nereid_website.company.id),
+                ('company', '=', current_website.company.id),
             ])
 
         if not users:
@@ -931,10 +931,10 @@ class NereidUser(ModelSQL, ModelView):
         """
         User profile
         """
-        user_form = ProfileForm(obj=request.nereid_user)
+        user_form = ProfileForm(obj=current_user)
         if user_form.validate_on_submit():
             cls.write(
-                [request.nereid_user], {
+                [current_user], {
                     'display_name': user_form.display_name.data,
                     'timezone': user_form.timezone.data,
                 }
@@ -942,7 +942,7 @@ class NereidUser(ModelSQL, ModelView):
             flash('Your profile has been updated.')
 
         if request.is_xhr or request.is_json:
-            return jsonify(request.nereid_user.serialize())
+            return jsonify(current_user.serialize())
 
         return render_template(
             'profile.jinja', user_form=user_form, active_type_name="general"

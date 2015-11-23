@@ -7,7 +7,7 @@ from werkzeug import redirect, abort
 from jinja2 import TemplateNotFound
 
 from nereid import request, url_for, render_template, login_required, flash, \
-    jsonify, route, current_user
+    jsonify, route, current_user, current_website
 from trytond.model import ModelView, ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.transaction import Transaction
@@ -38,7 +38,7 @@ class AddressForm(Form):
 
         # Fill country choices while form is initialized
         self.country.choices = [
-            (c.id, c.name) for c in request.nereid_website.countries
+            (c.id, c.name) for c in current_website.countries
         ]
 
 
@@ -111,8 +111,8 @@ class Address:
                 phone=address.party.phone
             )
         else:
-            address_name = "" if request.nereid_user.is_anonymous else \
-                request.nereid_user.display_name
+            address_name = "" if current_user.is_anonymous else \
+                current_user.display_name
             form = AddressForm(request.form, name=address_name)
 
         return form
@@ -140,7 +140,7 @@ class Address:
         form = cls.get_address_form()
 
         if request.method == 'POST' and form.validate():
-            party = request.nereid_user.party
+            party = current_user.party
             address, = cls.create([{
                 'name': form.name.data,
                 'street': form.street.data,
@@ -202,7 +202,7 @@ class Address:
 
         form = cls.get_address_form()
 
-        if address not in (a.id for a in request.nereid_user.party.addresses):
+        if address not in (a.id for a in current_user.party.addresses):
             # Check if the address is in the list of addresses of the
             # current user's party
             abort(403)
@@ -210,7 +210,7 @@ class Address:
         address = cls(address)
 
         if request.method == 'POST' and form.validate():
-            party = request.nereid_user.party
+            party = current_user.party
             cls.write([address], {
                 'name': form.name.data,
                 'street': form.street.data,
@@ -320,7 +320,7 @@ class ContactMechanism(ModelSQL, ModelView):
         form = cls.get_form()
         if form.validate_on_submit():
             cls.create([{
-                'party': request.nereid_user.party.id,
+                'party': current_user.party.id,
                 'type': form.type.data,
                 'value': form.value.data,
                 'comment': form.comment.data,
@@ -344,7 +344,7 @@ class ContactMechanism(ModelSQL, ModelView):
         """
         ContactMechanism = Pool().get('party.contact_mechanism')
 
-        if self.party == request.nereid_user.party:
+        if self.party == current_user.party:
             ContactMechanism.delete([self])
         else:
             abort(403)
