@@ -32,7 +32,7 @@ from .templating import nereid_default_template_ctx_processor, \
 from .helpers import url_for, root_transaction_if_required
 from .ctx import RequestContext
 from .csrf import NereidCsrfProtect
-from .signals import transaction_start, transaction_stop
+from .signals import transaction_start, transaction_stop, transaction_commit
 from .routing import Rule
 
 
@@ -457,6 +457,7 @@ class Nereid(Flask):
                         req, language=language, active_id=active_id
                     )
                     txn.cursor.commit()
+                    transaction_commit.send(self)
                 except DatabaseOperationalError:
                     # Strict transaction handling may cause this.
                     # Rollback and Retry the whole transaction if within
