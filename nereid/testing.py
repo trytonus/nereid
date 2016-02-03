@@ -66,6 +66,9 @@ class NereidTestApp(Nereid):
         req.view_args.pop('locale', None)
         active_id = req.view_args.pop('active_id', None)
 
+        from trytond.transaction import Transaction
+        Transaction().context.update(req.nereid_website.get_context())
+
         return self._dispatch_request(req, language, active_id)
 
 
