@@ -60,7 +60,10 @@ def url_for(endpoint, **values):
             DeprecationWarning, stacklevel=2
         )
 
-    if 'locale' not in values and request.nereid_website.locales:
+    # 'static' is Flask's default endpoint for static files.
+    # There is no need to set language in URL for static files
+    if endpoint != 'static' and \
+            'locale' not in values and request.nereid_website.locales:
         values['locale'] = request.nereid_locale.code
 
     return flask_url_for(endpoint, **values)
