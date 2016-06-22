@@ -28,6 +28,7 @@ from trytond.pool import Pool
 from trytond.pyson import Eval, Bool, Not
 from trytond.transaction import Transaction
 from trytond.config import config
+from trytond.rpc import RPC
 from trytond import backend
 from itsdangerous import URLSafeSerializer, TimestampSigner, SignatureExpired, \
     BadSignature, TimedJSONWebSignatureSerializer
@@ -240,6 +241,9 @@ class NereidUser(ModelSQL, ModelView):
             ('unique_email_company', 'UNIQUE(email, company)',
                 'Email must be unique in a company'),
         ]
+        cls.__rpc__.update({
+            'match_password': RPC(readonly=True, instantiate=0),
+        })
 
     @property
     def _signer(self):
