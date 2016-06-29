@@ -4,6 +4,7 @@ import random
 import string
 import urllib
 import base64
+import warnings
 
 try:
     import hashlib
@@ -115,7 +116,12 @@ class NereidUser(ModelSQL, ModelView):
         ondelete='CASCADE', select=1
     )
 
-    display_name = fields.Char('Display Name', required=True)
+    name = fields.Char('Name')
+    display_name = fields.Function(
+        fields.Char("Name"),
+        getter="get_display_name", setter="set_display_name",
+        searcher="search_display_name",
+    )
 
     #: The email of the user is also the login name/username of the user
     email = fields.Char("e-Mail", select=1)
@@ -149,6 +155,43 @@ class NereidUser(ModelSQL, ModelView):
     email_verified = fields.Boolean("Email Verified")
     active = fields.Boolean('Active')
 
+    @classmethod
+    def get_display_name(cls, records, name):
+        "Returns the display name"
+        warnings.warn(
+            "Nereid display_name field is deprecated, "
+            "use name instead",
+            DeprecationWarning, stacklevel=2
+        )
+        res = {}
+        for record in records:
+            res[record.id] = record.name
+        return res
+
+    @classmethod
+    def set_display_name(cls, records, name, value):
+        "Sets name field for instance"
+        warnings.warn(
+            "Nereid display_name field is deprecated, "
+            "use name instead",
+            DeprecationWarning, stacklevel=2
+        )
+        cls.write(records, {
+            'name': value
+        })
+
+    @classmethod
+    def search_display_name(cls, name, clause):
+        return [('name',) + tuple(clause[1:])]
+
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return ['OR',
+            ('party',) + tuple(clause[1:]),
+            ('display_name',) + tuple(clause[1:]),
+            ('email',) + tuple(clause[1:]),
+        ]
+
     @staticmethod
     def default_email_verified():
         return False
@@ -170,6 +213,7 @@ class NereidUser(ModelSQL, ModelView):
         table = TableHandler(Transaction().cursor, cls, module_name)
         user = cls.__table__()
 
+        table.column_rename("display_name", "name")
         super(NereidUser, cls).__register__(module_name)
 
         # Migrations
