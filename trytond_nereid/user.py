@@ -148,6 +148,14 @@ class NereidUser(ModelSQL, ModelView):
     email_verified = fields.Boolean("Email Verified")
     active = fields.Boolean('Active')
 
+    @classmethod
+    def search_rec_name(cls, name, clause):
+        return ['OR',
+            ('party',) + tuple(clause[1:]),
+            ('display_name',) + tuple(clause[1:]),
+            ('email',) + tuple(clause[1:]),
+        ]
+
     @staticmethod
     def default_email_verified():
         return False
