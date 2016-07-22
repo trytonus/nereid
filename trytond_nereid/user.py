@@ -108,7 +108,7 @@ class NereidUser(ModelSQL, ModelView):
     Nereid Users
     """
     __name__ = "nereid.user"
-    _rec_name = 'display_name'
+    _rec_name = 'name'
 
     party = fields.Many2One(
         'party.party', 'Party', required=True,
