@@ -15,7 +15,8 @@ except ImportError:
 import pytz
 from flask_wtf import Form, RecaptchaField
 from wtforms import TextField, SelectField, validators, PasswordField
-from flask.ext.login import logout_user, AnonymousUserMixin, login_url
+from flask.ext.login import logout_user, AnonymousUserMixin, login_url, \
+    login_user
 from werkzeug import redirect, abort
 
 from nereid import request, url_for, render_template, login_required, flash, \
@@ -496,6 +497,88 @@ class NereidUser(ModelSQL, ModelView):
         EmailQueue.queue_mail(
             config.get('email', 'from'), self.email, email_message.as_string()
         )
+
+    def get_magic_login_link(self, **options):
+        """
+        Returns a direct login link for user
+        """
+        return url_for(
+            'nereid.user.magic_login',
+            sign=self._get_sign('magic-login'),
+            active_id=self.id,
+            **options
+        )
+
+    @classmethod
+    @route('/send-magic-link/<email>', methods=['GET'], readonly=False)
+    def send_magic_login_link(cls, email):
+        """
+        Send a magic login email to the user
+        """
+        EmailQueue = Pool().get('email.queue')
+
+        try:
+            nereid_user, = cls.search([
+                ('email', '=', email),
+                ('company', '=', request.nereid_website.company.id),
+            ])
+        except ValueError:
+            # This email was not found so, let user know about this
+            message = "No user with email %s was found!" % email
+            current_app.logger.debug(message)
+        else:
+            message = "Please check your mail and follow the link"
+            email_message = render_email(
+                config.get('email', 'from'),
+                email, _('Magic Signin Link'),
+                text_template='emails/magic-login-text.jinja',
+                html_template='emails/magic-login-html.jinja',
+                nereid_user=nereid_user
+            )
+            EmailQueue.queue_mail(
+                config.get('email', 'from'), email, email_message.as_string()
+            )
+
+        return cls.build_response(
+            message, redirect(url_for('nereid.website.home')), 200
+        )
+
+    @route(
+        "/magic-login/<int:active_id>/<sign>",
+        methods=["GET"], readonly=False
+    )
+    def magic_login(self, sign, max_age=5 * 60):
+        """
+        Let the user log in without password if the token
+        is valid (less than 5 min old)
+        """
+        try:
+            unsigned = self._serializer.loads(
+                self._signer.unsign(sign, max_age=max_age),
+                salt='magic-login'
+            )
+        except SignatureExpired:
+            return self.build_response(
+                'This link has expired',
+                redirect(url_for('nereid.checkout.sign_in')), 400
+            )
+        except BadSignature:
+            return self.build_response(
+                'Invalid login link',
+                redirect(url_for('nereid.checkout.sign_in')), 400
+            )
+        else:
+            if not self.id == unsigned:
+                current_app.logger.debug('Invalid link')
+                abort(403)
+
+            login_user(self.load_user(self.id))
+            # TODO: Set this used token as expired to prevent using
+            # it more than once
+            return self.build_response(
+                'You have been successfully logged in',
+                redirect(url_for('nereid.website.home')), 200
+            )
 
     @classmethod
     @route("/change-password", methods=["GET", "POST"])
