@@ -4,8 +4,7 @@
 import unittest
 
 import trytond.tests.test_tryton
-from trytond.transaction import Transaction
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
+from trytond.tests.test_tryton import POOL, with_transaction
 from nereid.contrib.pagination import Pagination, BasePagination, \
     QueryPagination
 from sql import Table
@@ -59,102 +58,102 @@ class TestPagination(unittest.TestCase):
         self.assertEqual(pagination.end_count, 3)
         self.assertEqual(pagination.all_items(), [1, 2, 3, 4, 5, 6, 7, 8, 9])
 
+    @with_transaction()
     def test_0020_model_pagination(self):
         """
         Test pagination for models
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            # Create a 100 nereid users
-            for id in xrange(0, 100):
-                self.nereid_user_obj.create([{
-                    'party': self.guest_party,
-                    'display_name': 'User %s' % id,
-                    'email': 'user-%s@openlabs.co.in' % id,
-                    'password': 'password',
-                    'company': self.company.id,
-                }])
+        # Create a 100 nereid users
+        for id in xrange(0, 100):
+            self.nereid_user_obj.create([{
+                'party': self.guest_party,
+                'display_name': 'User %s' % id,
+                'email': 'user-%s@openlabs.co.in' % id,
+                'password': 'password',
+                'company': self.company.id,
+            }])
 
-            pagination = Pagination(self.nereid_user_obj, [], 1, 10)
-            self.assertEqual(pagination.count, 100)
-            self.assertEqual(pagination.pages, 10)
-            self.assertEqual(pagination.begin_count, 1)
-            self.assertEqual(pagination.end_count, 10)
+        pagination = Pagination(self.nereid_user_obj, [], 1, 10)
+        self.assertEqual(pagination.count, 100)
+        self.assertEqual(pagination.pages, 10)
+        self.assertEqual(pagination.begin_count, 1)
+        self.assertEqual(pagination.end_count, 10)
 
+    @with_transaction()
     def test_0030_model_pagination_serialization(self):
         """
         Test serialization of pagination for models
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            # Create a 100 nereid users
-            for id in xrange(0, 100):
-                self.nereid_user_obj.create([{
-                    'party': self.guest_party,
-                    'display_name': 'User %s' % id,
-                    'email': 'user-%s@openlabs.co.in' % id,
-                    'password': 'password',
-                    'company': self.company.id,
-                }])
+        # Create a 100 nereid users
+        for id in xrange(0, 100):
+            self.nereid_user_obj.create([{
+                'party': self.guest_party,
+                'display_name': 'User %s' % id,
+                'email': 'user-%s@openlabs.co.in' % id,
+                'password': 'password',
+                'company': self.company.id,
+            }])
 
-            pagination = Pagination(self.nereid_user_obj, [], 1, 10)
-            serialized = pagination.serialize()
+        pagination = Pagination(self.nereid_user_obj, [], 1, 10)
+        serialized = pagination.serialize()
 
-            self.assertEqual(serialized['count'], 100)
-            self.assertEqual(serialized['pages'], 10)
-            self.assertEqual(serialized['page'], 1)
-            self.assertEqual(len(serialized['items']), 10)
+        self.assertEqual(serialized['count'], 100)
+        self.assertEqual(serialized['pages'], 10)
+        self.assertEqual(serialized['page'], 1)
+        self.assertEqual(len(serialized['items']), 10)
 
-            self.assert_('display_name' in serialized['items'][0])
+        self.assert_('display_name' in serialized['items'][0])
 
+    @with_transaction()
     def test_0040_model_pagination_serialization(self):
         """
         Test serialization of pagination for model which does not have
         serialize method
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            # Create a 100 addresses
-            for id in xrange(0, 100):
-                self.address_obj.create([{
-                    'party': self.guest_party,
-                    'name': 'User %s' % id,
-                }])
+        # Create a 100 addresses
+        for id in xrange(0, 100):
+            self.address_obj.create([{
+                'party': self.guest_party,
+                'name': 'User %s' % id,
+            }])
 
-            pagination = Pagination(self.address_obj, [], 1, 10)
-            serialized = pagination.serialize()
+        pagination = Pagination(self.address_obj, [], 1, 10)
+        serialized = pagination.serialize()
 
-            self.assert_('id' in serialized['items'][0])
-            self.assert_('rec_name' in serialized['items'][0])
+        self.assert_('id' in serialized['items'][0])
+        self.assert_('rec_name' in serialized['items'][0])
 
+    @with_transaction()
     def test_0050_query_pagination(self):
         """
         Test pagination via `nereid.contrib.QueryPagination.`
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            # Create a 100 addresses
-            for id in xrange(0, 100):
-                self.address_obj.create([{
-                    'party': self.guest_party,
-                    'name': 'User %s' % id,
-                }])
+        # Create a 100 addresses
+        for id in xrange(0, 100):
+            self.address_obj.create([{
+                'party': self.guest_party,
+                'name': 'User %s' % id,
+            }])
 
-            table = Table('party_address')
-            select_query = table.select()
+        table = Table('party_address')
+        select_query = table.select()
 
-            pagination = QueryPagination(
-                self.address_obj, select_query, table, page=1, per_page=10
-            )
+        pagination = QueryPagination(
+            self.address_obj, select_query, table, page=1, per_page=10
+        )
 
-            self.assertEqual(pagination.count, 100)
-            self.assertEqual(pagination.pages, 10)
-            self.assertEqual(pagination.begin_count, 1)
-            self.assertEqual(pagination.end_count, 10)
+        self.assertEqual(pagination.count, 100)
+        self.assertEqual(pagination.pages, 10)
+        self.assertEqual(pagination.begin_count, 1)
+        self.assertEqual(pagination.end_count, 10)
 
     # TODO: Test the order handling of serialization
 

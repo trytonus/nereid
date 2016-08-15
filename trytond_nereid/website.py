@@ -15,11 +15,10 @@ from nereid.globals import request
 from nereid.exceptions import WebsiteNotFound
 from nereid.helpers import login_required, key_from_list, get_flashed_messages
 from nereid.signals import failed_login
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import ModelView, ModelSQL, fields, Unique
 from trytond.transaction import Transaction
 from trytond.pool import Pool
 from trytond.cache import Cache
-from trytond import backend
 
 from .i18n import _
 
@@ -126,18 +125,11 @@ class WebSite(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(WebSite, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints = [
-            ('name_uniq', 'UNIQUE(name)',
+            ('name_uniq', Unique(table, table.name),
              'Another site with the same name already exists!')
         ]
-
-    @classmethod
-    def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-        super(WebSite, cls).__register__(module_name)
-        table = TableHandler(Transaction().cursor, cls, module_name)
-
-        table.not_null_action('guest_user', action='remove')
 
     @classmethod
     @route("/countries", methods=["GET"])
@@ -285,7 +277,7 @@ class WebSite(ModelSQL, ModelView):
             done directly on a browse node.
         """
         cache_key = key_from_list([
-            Transaction().cursor.dbname,
+            Transaction().database.name,
             Transaction().user,
             'nereid.website.get_currencies',
         ])
@@ -434,8 +426,9 @@ class WebSiteLocale(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(WebSiteLocale, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints += [
-            ('unique_code', 'UNIQUE(code)',
+            ('unique_code', Unique(table, table.code),
                 'Code must be unique'),
         ]
 

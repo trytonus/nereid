@@ -5,9 +5,8 @@ import unittest
 from decimal import Decimal
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from nereid.testing import NereidTestCase
-from trytond.transaction import Transaction
 
 
 class TestCurrency(NereidTestCase):
@@ -107,52 +106,52 @@ class TestCurrency(NereidTestCase):
         """
         return self.templates.get(name)
 
+    @with_transaction()
     def test_0010_currency_from_default_locale(self):
         """
         Do not set a currency for the language, and the fail over of
         picking currency from default locale.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                rv = c.get('/en_us/')
-                self.assertEqual(rv.status_code, 200)
+        with app.test_client() as c:
+            rv = c.get('/en_us/')
+            self.assertEqual(rv.status_code, 200)
 
-            self.assertEqual(int(rv.data), self.usd.id)
+        self.assertEqual(int(rv.data), self.usd.id)
 
-            with app.test_request_context('/en_us/'):
-                self.assertEqual(
-                    self.currency_obj.convert(Decimal('100')), Decimal('100')
-                )
+        with app.test_request_context('/en_us/'):
+            self.assertEqual(
+                self.currency_obj.convert(Decimal('100')), Decimal('100')
+            )
 
+    @with_transaction()
     def test_0020_currency_from_locale(self):
         """
         Test and ensure that the currency is based on the locale
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                rv = c.get('/en_US/')
-                self.assertEqual(rv.status_code, 200)
-                self.assertEqual(int(rv.data), int(self.usd.id))
+        with app.test_client() as c:
+            rv = c.get('/en_US/')
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(int(rv.data), int(self.usd.id))
 
-                rv = c.get('/es_ES/')
-                self.assertEqual(rv.status_code, 200)
-                self.assertEqual(int(rv.data), int(self.eur.id))
+            rv = c.get('/es_ES/')
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(int(rv.data), int(self.eur.id))
 
-            with app.test_request_context('/en_US/'):
-                self.assertEqual(
-                    self.currency_obj.convert(Decimal('100')), Decimal('100')
-                )
+        with app.test_request_context('/en_US/'):
+            self.assertEqual(
+                self.currency_obj.convert(Decimal('100')), Decimal('100')
+            )
 
-            with app.test_request_context('/es_ES/'):
-                self.assertEqual(
-                    self.currency_obj.convert(Decimal('100')), Decimal('200')
-                )
+        with app.test_request_context('/es_ES/'):
+            self.assertEqual(
+                self.currency_obj.convert(Decimal('100')), Decimal('200')
+            )
 
 
 def suite():
