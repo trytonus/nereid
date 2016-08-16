@@ -4,8 +4,7 @@ import unittest
 import json
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
-from trytond.transaction import Transaction
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from nereid.testing import NereidTestCase
 
 
@@ -55,24 +54,24 @@ class TestWebsite(NereidTestCase):
             'default_locale': locale,
         }])
 
+    @with_transaction()
     def test_0010_user_status(self):
         """
         Test that user status returns jsonified object on POST
         request.
         """
-        with Transaction().start(DB_NAME, USER, context=CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                rv = c.get('/user_status')
-                self.assertEqual(rv.status_code, 200)
+        with app.test_client() as c:
+            rv = c.get('/user_status')
+            self.assertEqual(rv.status_code, 200)
 
-                rv = c.post('/user_status')
-                data = json.loads(rv.data)
+            rv = c.post('/user_status')
+            data = json.loads(rv.data)
 
-                self.assertEqual(data['status']['logged_id'], False)
-                self.assertEqual(data['status']['messages'], [])
+            self.assertEqual(data['status']['logged_id'], False)
+            self.assertEqual(data['status']['messages'], [])
 
 
 def suite():

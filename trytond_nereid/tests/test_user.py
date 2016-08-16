@@ -1,27 +1,25 @@
 # -*- coding: utf-8 -*-
 """
-    Test Country
+    Test User
 
-    :copyright: (c) 2014 by Openlabs Technologies & Consulting (P) Limited
+    :copyright: (c) 2015 by Fulfil.IO Inc.
     :license: BSD, see LICENSE for more details.
 """
-import json
-import unittest
 from decimal import Decimal
+import unittest
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, with_transaction
 from nereid.testing import NereidTestCase
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 
 
-class TestCountry(NereidTestCase):
+class TestUser(NereidTestCase):
     """
-    Test Country
+    Test User
     """
 
     def setUp(self):
         trytond.tests.test_tryton.install_module('nereid')
-
         self.nereid_website_obj = POOL.get('nereid.website')
         self.nereid_website_locale_obj = POOL.get('nereid.website.locale')
         self.nereid_permission_obj = POOL.get('nereid.permission')
@@ -107,70 +105,29 @@ class TestCountry(NereidTestCase):
         }
 
     @with_transaction()
-    def test_0010_all_countries(self):
-        """
-        Check list of json serialized countries
-        """
+    def test_0010_user(self):
+        "Test for User display_name deprecated field"
         self.setup_defaults()
-        app = self.get_app()
 
-        self.Country.create([{
-            'name': 'India',
-            'code': 'IN'
-        }, {
-            'name': 'Australia',
-            'code': 'AU',
+        user, = self.nereid_user_obj.create([{
+            "display_name": "Fulfil.io",
+            "party": self.party.id,
+            "company": self.company.id,
         }])
+        assert user.name == "Fulfil.io"
+        assert user.display_name == "Fulfil.io"
 
-        with app.test_client() as c:
-            rv = c.get('/all-countries')
-            self.assertEqual(rv.status_code, 200)
-            data = json.loads(rv.data)
-            self.assertEqual(len(data['countries']), 2)
-
-    @with_transaction()
-    def test_0010_subdivisions(self):
-        """
-        Check subdivisons for given country
-        """
-        self.setup_defaults()
-        app = self.get_app()
-
-        country1, country2, = self.Country.create([{
-            'name': 'India',
-            'code': 'IN'
-        }, {
-            'name': 'Australia',
-            'code': 'AU',
-        }])
-
-        # Create subdivision only for country1
-        self.Subdivision.create([{
-            'country': country1.id,
-            'code': 'IN-OR',
-            'name': 'Orissa',
-            'type': 'state',
-        }])
-
-        with app.test_client() as c:
-            rv = c.get('/countries/%d/subdivisions' % country1.id)
-            self.assertEqual(rv.status_code, 200)
-            data = json.loads(rv.data)
-            self.assertEqual(len(data['result']), 1)
-            self.assertTrue(data['result'][0]['name'] == 'Orissa')
-            self.assertTrue(data['result'][0]['code'] == 'IN-OR')
-
-            rv = c.get('/countries/%d/subdivisions' % country2.id)
-            self.assertEqual(rv.status_code, 200)
-            data = json.loads(rv.data)
-            self.assertEqual(len(data['result']), 0)
+        search_result, = self.nereid_user_obj.search([
+            ('display_name', '=', 'Fulfil.io'),
+        ])
+        assert search_result == user
 
 
 def suite():
-    "Country test suite"
+    "Nereid test suite"
     test_suite = unittest.TestSuite()
     test_suite.addTests(
-        unittest.TestLoader().loadTestsFromTestCase(TestCountry)
+        unittest.TestLoader().loadTestsFromTestCase(TestUser)
     )
     return test_suite
 

@@ -20,6 +20,7 @@ from test_routing import TestRouting
 from test_translation import TestTranslation
 from test_country import TestCountry
 from test_website import TestWebsite
+from test_user import TestUser
 
 
 class TestNereid(ModuleTestCase):
@@ -58,6 +59,9 @@ def suite():
     )
     test_suite.addTests(
         unittest.TestLoader().loadTestsFromTestCase(TestWebsite)
+    )
+    test_suite.addTests(
+        unittest.TestLoader().loadTestsFromTestCase(TestUser)
     )
     return test_suite
 

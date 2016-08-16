@@ -24,3 +24,5 @@ registration = _signals.signal('registration')
 
 transaction_start = _signals.signal('nereid.transaction.start')
 transaction_stop = _signals.signal('nereid.transaction.stop')
+# transaction_commit is triggered when transaction successfully ends
+transaction_commit = _signals.signal('nereid.transaction.commit')
