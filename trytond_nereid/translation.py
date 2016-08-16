@@ -26,7 +26,7 @@ from trytond.wizard import Wizard
 from trytond.transaction import Transaction
 from trytond.pool import Pool, PoolMeta
 from trytond.cache import Cache
-from trytond.tools import file_open
+from trytond.tools import file_open, cursor_dict
 from trytond.ir.translation import TrytonPOFile
 
 __all__ = [
@@ -319,7 +319,7 @@ class Translation:
         if trans != -1:
             return trans
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         table = cls.__table__()
         where = (
             (table.lang == lang) &
@@ -389,7 +389,7 @@ class TranslationSet:
         from trytond.modules import create_graph, get_module_list, \
             MODULES_PATH, EGG_MODULES
 
-        IrModule = Pool().get('ir.module.module')
+        IrModule = Pool().get('ir.module')
 
         packages = list(create_graph(get_module_list())[0])[::-1]
         installed_module_list = map(
@@ -631,7 +631,7 @@ class TranslationUpdate:
         pool = Pool()
         Translation = pool.get('ir.translation')
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         lang = self.start.language.code
         translation = Translation.__table__()
 
@@ -655,7 +655,7 @@ class TranslationUpdate:
                 translation.type.in_(types))
         ))
         to_create = []
-        for row in cursor.dictfetchall():
+        for row in cursor_dict(cursor):
             to_create.append({
                 'name': row['name'],
                 'res_id': row['res_id'],

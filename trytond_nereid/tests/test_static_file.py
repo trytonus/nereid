@@ -11,8 +11,7 @@
 import unittest
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
-from trytond.transaction import Transaction
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from trytond.pool import PoolMeta, Pool
 from trytond.config import config
 from nereid.testing import NereidTestCase
@@ -127,39 +126,39 @@ class TestStaticFile(NereidTestCase):
             'file_binary': file_buffer,
         }])[0]
 
+    @with_transaction()
     def test_0010_static_file(self):
         """
         Create a static folder, and a static file
         And check if it can be fetched
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            file_buffer = buffer('test-content')
-            static_file = self.create_static_file(file_buffer)
-            self.assertEqual(static_file.file_binary, file_buffer)
+        file_buffer = buffer('test-content')
+        static_file = self.create_static_file(file_buffer)
+        self.assertEqual(static_file.file_binary, file_buffer)
 
-            app = self.get_app()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                rv = c.get('/en_US/static-file/test/test.png')
-                self.assertEqual(rv.status_code, 200)
-                self.assertEqual(rv.data, 'test-content')
-                self.assertEqual(rv.headers['Content-Type'], 'image/png')
+        with app.test_client() as c:
+            rv = c.get('/en_US/static-file/test/test.png')
+            self.assertEqual(rv.status_code, 200)
+            self.assertEqual(rv.data, 'test-content')
+            self.assertEqual(rv.headers['Content-Type'], 'image/png')
 
+    @with_transaction()
     def test_0020_static_file_url(self):
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            file_buffer = buffer('test-content')
-            file = self.create_static_file(file_buffer)
-            self.assertFalse(file.url)
+        file_buffer = buffer('test-content')
+        file = self.create_static_file(file_buffer)
+        self.assertFalse(file.url)
 
-            app = self.get_app()
-            with app.test_client() as c:
-                rv = c.get('/en_US/static-file-test')
-                self.assertEqual(rv.status_code, 200)
-                self.assertTrue('/en_US/static-file/test/test.png' in rv.data)
+        app = self.get_app()
+        with app.test_client() as c:
+            rv = c.get('/en_US/static-file-test')
+            self.assertEqual(rv.status_code, 200)
+            self.assertTrue('/en_US/static-file/test/test.png' in rv.data)
 
 
 def suite():

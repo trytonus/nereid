@@ -92,7 +92,7 @@
             <field name="name">Configure Nereid</field>
             <field name="wiz_name">nereid.website.config</field>
         </record>
-        <record model="ir.module.module.config_wizard.item"
+        <record model="ir.module.config_wizard.item"
             id="config_wizard_item_nereid">
             <field name="action" ref="act_nereid_config"/>
             <field name="sequence" eval="20"/>

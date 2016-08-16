@@ -10,7 +10,7 @@
 import unittest
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from nereid.testing import NereidTestCase
 from nereid import render_template
 from trytond.transaction import Transaction
@@ -117,66 +117,67 @@ class TestI18N(NereidTestCase):
         }
         return templates.get(name)
 
+    @with_transaction()
     def test_0010_simple_txn(self):
         """
         Test if the translations work in a simple env
         """
         IRTranslation = POOL.get('ir.translation')
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            s = _("en_US")
+        s = _("en_US")
+        self.assertEqual(s, u'en_US')
+
+        # install translations
+        self.set_translations()
+        self.update_translations('fr_FR')
+
+        # without setting a tranlsation looking for it gives en_US
+        with Transaction().set_context(language="fr_FR"):
             self.assertEqual(s, u'en_US')
 
-            # install translations
-            self.set_translations()
-            self.update_translations('fr_FR')
+        # write a translation for it
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid'),
+            ('src', '=', 'en_US'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = 'fr_FR'
+        translation.save()
 
-            # without setting a tranlsation looking for it gives en_US
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(s, u'en_US')
+        with Transaction().set_context(language="fr_FR"):
+            self.assertEqual(s, u'fr_FR')
 
-            # write a translation for it
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid'),
-                ('src', '=', 'en_US'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = 'fr_FR'
-            translation.save()
-
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(s, u'fr_FR')
-
+    @with_transaction()
     def test_0020_kwargs(self):
         """
         Test if kwargs work
         """
         IRTranslation = POOL.get('ir.translation')
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            s = _("Hi %(name)s", name="Sharoon")
-            self.assertEqual(s, u"Hi Sharoon")
+        s = _("Hi %(name)s", name="Sharoon")
+        self.assertEqual(s, u"Hi Sharoon")
 
-            # install translations
-            self.set_translations()
-            self.update_translations('fr_FR')
+        # install translations
+        self.set_translations()
+        self.update_translations('fr_FR')
 
-            # without setting a tranlsation looking for it gives en_US
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(s, u'Hi Sharoon')
+        # without setting a tranlsation looking for it gives en_US
+        with Transaction().set_context(language="fr_FR"):
+            self.assertEqual(s, u'Hi Sharoon')
 
-            # write a translation for it
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid'),
-                ('src', '=', 'Hi %(name)s'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = 'Bonjour %(name)s'
-            translation.save()
+        # write a translation for it
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid'),
+            ('src', '=', 'Hi %(name)s'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = 'Bonjour %(name)s'
+        translation.save()
 
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(s, u'Bonjour Sharoon')
+        with Transaction().set_context(language="fr_FR"):
+            self.assertEqual(s, u'Bonjour Sharoon')
 
+    @with_transaction()
     def test_0030_ngettext(self):
         """
         Test if ngettext work
@@ -186,143 +187,142 @@ class TestI18N(NereidTestCase):
         singular = ngettext("%(num)d apple", "%(num)d apples", 1)
         plural = ngettext("%(num)d apple", "%(num)d apples", 2)
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
+        self.assertEqual(singular, u"1 apple")
+        self.assertEqual(plural, u"2 apples")
+
+        # install translations
+        self.set_translations()
+        self.update_translations('fr_FR')
+
+        # without setting a tranlsation looking for it gives en_US
+        with Transaction().set_context(language="fr_FR"):
             self.assertEqual(singular, u"1 apple")
             self.assertEqual(plural, u"2 apples")
 
-            # install translations
-            self.set_translations()
-            self.update_translations('fr_FR')
+        # write a translation for singular
+        translations = IRTranslation.search([
+            ('module', '=', 'nereid'),
+            ('src', '=', '%(num)d apple'),
+            ('lang', '=', 'fr_FR')
+        ])
+        for translation in translations:
+            translation.value = '%(num)d pomme'
+            translation.save()
 
-            # without setting a tranlsation looking for it gives en_US
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(singular, u"1 apple")
-                self.assertEqual(plural, u"2 apples")
+        # write a translation for it
+        translations = IRTranslation.search([
+            ('module', '=', 'nereid'),
+            ('src', '=', '%(num)d apples'),
+            ('lang', '=', 'fr_FR')
+        ])
+        for translation in translations:
+            translation.value = '%(num)d pommes'
+            translation.save()
 
-            # write a translation for singular
-            translations = IRTranslation.search([
-                ('module', '=', 'nereid'),
-                ('src', '=', '%(num)d apple'),
-                ('lang', '=', 'fr_FR')
-            ])
-            for translation in translations:
-                translation.value = '%(num)d pomme'
-                translation.save()
+        with Transaction().set_context(language="fr_FR"):
+            self.assertEqual(singular, u"1 pomme")
+            self.assertEqual(plural, u"2 pommes")
 
-            # write a translation for it
-            translations = IRTranslation.search([
-                ('module', '=', 'nereid'),
-                ('src', '=', '%(num)d apples'),
-                ('lang', '=', 'fr_FR')
-            ])
-            for translation in translations:
-                translation.value = '%(num)d pommes'
-                translation.save()
-
-            with Transaction().set_context(language="fr_FR"):
-                self.assertEqual(singular, u"1 pomme")
-                self.assertEqual(plural, u"2 pommes")
-
+    @with_transaction()
     def test_0110_template(self):
         """
         Test the working of translations in templates
         """
         IRTranslation = POOL.get('ir.translation')
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            class User(object):
-                def __init__(self, username):
-                    self.username = username
+        class User(object):
+            def __init__(self, username):
+                self.username = username
 
-                def __html__(self):
-                    return self.username
+            def __html__(self):
+                return self.username
 
-            user = User('Sharoon')
+        user = User('Sharoon')
 
-            template_context = {
-                'user': user,
-                'username': user.username,
-                'list': [1],
-                'objname': _('name'),
-                'apples': [1, 2],
-            }
+        template_context = {
+            'user': user,
+            'username': user.username,
+            'list': [1],
+            'objname': _('name'),
+            'apples': [1, 2],
+        }
 
-            def check_en_us(rv):
-                self.assertTrue('There is 1 name object.' in rv)
-                self.assertTrue('2 apples' in rv)
-                self.assertTrue('<p>Hello Sharoon!</p>' in rv)
+        def check_en_us(rv):
+            self.assertTrue('There is 1 name object.' in rv)
+            self.assertTrue('2 apples' in rv)
+            self.assertTrue('<p>Hello Sharoon!</p>' in rv)
 
-            def check_fr_fr(rv):
-                self.assertTrue('There is 1 name in fr_FR object.' in rv)
-                self.assertTrue('2 pommes' in rv)
-                self.assertTrue('<p>Bonjour Sharoon!</p>' in rv)
+        def check_fr_fr(rv):
+            self.assertTrue('There is 1 name in fr_FR object.' in rv)
+            self.assertTrue('2 pommes' in rv)
+            self.assertTrue('<p>Bonjour Sharoon!</p>' in rv)
 
-            with app.test_request_context('/en_US/'):
+        with app.test_request_context('/en_US/'):
+            rv = unicode(render_template(
+                'tests/translation-test.html',
+                **template_context
+            ))
+            check_en_us(rv)
+
+            with Transaction().set_context(language="fr_FR"):
+                # No translations set yet, so same thing
                 rv = unicode(render_template(
                     'tests/translation-test.html',
                     **template_context
                 ))
                 check_en_us(rv)
 
-                with Transaction().set_context(language="fr_FR"):
-                    # No translations set yet, so same thing
-                    rv = unicode(render_template(
-                        'tests/translation-test.html',
-                        **template_context
-                    ))
-                    check_en_us(rv)
+        # install translations
+        self.set_translations()
+        self.update_translations('fr_FR')
 
-            # install translations
-            self.set_translations()
-            self.update_translations('fr_FR')
+        # write french translations
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid_test'),
+            ('type', '=', 'nereid_template'),
+            ('src', '=', 'Hello %(username)s!'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = 'Bonjour %(username)s!'
+        translation.save()
 
-            # write french translations
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid_test'),
-                ('type', '=', 'nereid_template'),
-                ('src', '=', 'Hello %(username)s!'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = 'Bonjour %(username)s!'
-            translation.save()
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid_test'),
+            ('type', '=', 'nereid_template'),
+            ('src', '=', '%(num)d apples'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = '%(num)d pommes'
+        translation.save()
 
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid_test'),
-                ('type', '=', 'nereid_template'),
-                ('src', '=', '%(num)d apples'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = '%(num)d pommes'
-            translation.save()
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid_test'),
+            ('type', '=', 'nereid_template'),
+            ('src', '=', 'Hello %(name)s!'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = 'Bonjour %(name)s!'
+        translation.save()
 
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid_test'),
-                ('type', '=', 'nereid_template'),
-                ('src', '=', 'Hello %(name)s!'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = 'Bonjour %(name)s!'
-            translation.save()
+        translation, = IRTranslation.search([
+            ('module', '=', 'nereid'),
+            ('name', '=', 'tests/test_i18n.py'),
+            ('src', '=', 'name'),
+            ('lang', '=', 'fr_FR')
+        ])
+        translation.value = 'name in fr_FR'
+        translation.save()
 
-            translation, = IRTranslation.search([
-                ('module', '=', 'nereid'),
-                ('name', '=', 'tests/test_i18n.py'),
-                ('src', '=', 'name'),
-                ('lang', '=', 'fr_FR')
-            ])
-            translation.value = 'name in fr_FR'
-            translation.save()
-
-            with app.test_request_context('/fr_FR/'):
-                with Transaction().set_context(language="fr_FR"):
-                    rv = unicode(render_template(
-                        'tests/translation-test.html',
-                        **template_context
-                    ))
-                    check_fr_fr(rv)
+        with app.test_request_context('/fr_FR/'):
+            with Transaction().set_context(language="fr_FR"):
+                rv = unicode(render_template(
+                    'tests/translation-test.html',
+                    **template_context
+                ))
+                check_fr_fr(rv)
 
 
 def suite():

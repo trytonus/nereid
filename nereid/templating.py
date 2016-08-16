@@ -196,7 +196,7 @@ class ModuleTemplateLoader(ChoiceLoader):
         if self._loaders is None:
             self._loaders = []
 
-            if not Transaction().cursor:
+            if not Transaction().connection.cursor():
                 contextmanager = Transaction().start(self.database_name, 0)
             else:
                 contextmanager = contextlib.nested(
@@ -204,9 +204,9 @@ class ModuleTemplateLoader(ChoiceLoader):
                     Transaction().reset_context()
                 )
             with contextmanager:
-                cursor = Transaction().cursor
+                cursor = Transaction().connection.cursor()
                 cursor.execute(
-                    "SELECT name FROM ir_module_module "
+                    "SELECT name FROM ir_module "
                     "WHERE state = 'installed'"
                 )
                 installed_module_list = [name for (name,) in cursor.fetchall()]

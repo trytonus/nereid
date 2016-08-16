@@ -8,11 +8,10 @@ from nereid.helpers import send_file, url_for
 from nereid.globals import _request_ctx_stack
 from werkzeug import abort
 
-from trytond.model import ModelSQL, ModelView, fields
+from trytond.model import ModelSQL, ModelView, fields, Unique
 from trytond.config import config
 from trytond.transaction import Transaction
 from trytond.pyson import Eval, Bool
-from trytond import backend
 
 __all__ = ['NereidStaticFolder', 'NereidStaticFile']
 
@@ -41,8 +40,9 @@ class NereidStaticFolder(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(NereidStaticFolder, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints += [
-            ('unique_folder', 'UNIQUE(name)',
+            ('unique_folder', Unique(table, table.name),
              'Folder name needs to be unique')
         ]
         cls._error_messages.update({
@@ -50,16 +50,6 @@ class NereidStaticFolder(ModelSQL, ModelView):
                 (1) '.' in folder name (OR)
                 (2) folder name begins with '/'""",
         })
-
-    @classmethod
-    def __register__(cls, module_name):
-        TableHandler = backend.get('TableHandler')
-        cursor = Transaction().cursor
-        table = TableHandler(cursor, cls, module_name)
-
-        table.column_rename('folder_name', 'name')
-
-        super(NereidStaticFolder, cls).__register__(module_name)
 
     @classmethod
     def validate(cls, folders):
@@ -119,8 +109,9 @@ class NereidStaticFile(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(NereidStaticFile, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints += [
-            ('name_folder_uniq', 'UNIQUE(name, folder)',
+            ('name_folder_uniq', Unique(table, table.name, table.folder),
                 'The Name of the Static File must be unique in a folder.!'),
         ]
         cls._error_messages.update({
@@ -172,9 +163,10 @@ class NereidStaticFile(ModelSQL, ModelView):
 
         <Tryton Data Path>/<Database Name>/nereid
         """
-        cursor = Transaction().cursor
         return os.path.join(
-            config.get('database', 'path'), cursor.database_name, "nereid"
+            config.get('database', 'path'),
+            Transaction().database.name,
+            "nereid"
         )
 
     def _set_file_binary(self, value):

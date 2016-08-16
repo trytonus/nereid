@@ -4,7 +4,7 @@ import unittest
 from decimal import Decimal
 
 import trytond.tests.test_tryton
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 from trytond.transaction import Transaction
 from nereid.testing import NereidTestCase
 from nereid.exceptions import WebsiteNotFound
@@ -96,206 +96,206 @@ class TestRouting(NereidTestCase):
         app.jinja_env.globals['Transaction'] = Transaction
         return app
 
+    @with_transaction()
     def test_0010_home_with_locales(self):
         """
         When accessing / for website with locales defined, there should be a
         redirect to the /locale
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertEqual(response.status_code, 301)
-                self.assertEqual(
-                    response.location,
-                    'http://localhost/%s' % self.locale_en_us.code
-                )
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertEqual(response.status_code, 301)
+            self.assertEqual(
+                response.location,
+                'http://localhost/%s' % self.locale_en_us.code
+            )
 
-            # Change the default locale to es_ES and then check
-            self.nereid_website.default_locale = self.locale_es_es
-            self.nereid_website.save()
-            self.nereid_website.clear_url_adapter_cache()
+        # Change the default locale to es_ES and then check
+        self.nereid_website.default_locale = self.locale_es_es
+        self.nereid_website.save()
+        self.nereid_website.clear_url_adapter_cache()
 
-            app = self.get_app()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertEqual(response.status_code, 301)
-                self.assertEqual(
-                    response.location,
-                    'http://localhost/%s' % self.locale_es_es.code
-                )
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertEqual(response.status_code, 301)
+            self.assertEqual(
+                response.location,
+                'http://localhost/%s' % self.locale_es_es.code
+            )
 
+    @with_transaction()
     def test_0020_home_without_locales(self):
         """
         When accessed without locales the site should return 200 on /
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        self.setup_defaults()
 
-            # unset the locales
-            self.nereid_website.locales = []
-            self.nereid_website.save()
+        # unset the locales
+        self.nereid_website.locales = []
+        self.nereid_website.save()
 
-            app = self.get_app()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'en_US')
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'en_US')
 
+    @with_transaction()
     def test_0030_lang_context_with_locale(self):
         """
         Test that the language available in the context is the right one
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            app = self.get_app()
+        self.setup_defaults()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('/en_US/')
-                self.assertEqual(response.data, 'en_US')
+        with app.test_client() as c:
+            response = c.get('/en_US/')
+            self.assertEqual(response.data, 'en_US')
 
-            with app.test_client() as c:
-                response = c.get('/es_ES/')
-                self.assertEqual(response.data, 'es_ES')
+        with app.test_client() as c:
+            response = c.get('/es_ES/')
+            self.assertEqual(response.data, 'es_ES')
 
+    @with_transaction()
     def test_0040_lang_context_without_locale(self):
         """
         Test that the language available in the context is the right one
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            self.nereid_website.locales = []
-            self.nereid_website.save()
-            app = self.get_app()
+        self.setup_defaults()
+        self.nereid_website.locales = []
+        self.nereid_website.save()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertEqual(response.data, 'en_US')
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertEqual(response.data, 'en_US')
 
-            # Change the default locale to es_ES and then check
-            self.nereid_website.default_locale = self.locale_es_es
-            self.nereid_website.save()
+        # Change the default locale to es_ES and then check
+        self.nereid_website.default_locale = self.locale_es_es
+        self.nereid_website.save()
 
-            with app.test_client() as c:
-                response = c.get('/')
-                self.assertEqual(response.data, 'es_ES')
+        with app.test_client() as c:
+            response = c.get('/')
+            self.assertEqual(response.data, 'es_ES')
 
+    @with_transaction()
     def test_0050_website_routing(self):
         """
         Test should not check for match on single website.
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            self.nereid_website.locales = []
-            self.nereid_website.save()
-            app = self.get_app()
+        self.setup_defaults()
+        self.nereid_website.locales = []
+        self.nereid_website.save()
+        app = self.get_app()
 
-            with app.test_client() as c:
-                response = c.get('http://localhost/')
-                self.assertEqual(response.data, 'en_US')
+        with app.test_client() as c:
+            response = c.get('http://localhost/')
+            self.assertEqual(response.data, 'en_US')
 
-                response = c.get('http://this_should_work_too/')
-                self.assertEqual(response.data, 'en_US')
+            response = c.get('http://this_should_work_too/')
+            self.assertEqual(response.data, 'en_US')
 
-                self.nereid_website_obj.create([{
-                    'name': 'another_website',
-                    'company': self.company,
-                    'application_user': USER,
-                    'default_locale': self.locale_en_us,
-                }])
+            self.nereid_website_obj.create([{
+                'name': 'another_website',
+                'company': self.company,
+                'application_user': USER,
+                'default_locale': self.locale_en_us,
+            }])
 
-                # Should Break, As there are more than 1 website.
-                self.assertRaises(
-                    WebsiteNotFound, c.get, 'http://this_should_break/'
-                )
+            # Should Break, As there are more than 1 website.
+            self.assertRaises(
+                WebsiteNotFound, c.get, 'http://this_should_break/'
+            )
 
+    @with_transaction()
     def test_0060_invalid_active_id_url(self):
         """
         Test that the url if 404 if record for active_id doesn't exist
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            self.nereid_website.locales = []
-            self.nereid_website.save()
-            app = self.get_app()
-            country, = self.country_obj.create([{
-                'name': 'India',
-                'code': 'IN'
-            }])
+        self.setup_defaults()
+        self.nereid_website.locales = []
+        self.nereid_website.save()
+        app = self.get_app()
+        country, = self.country_obj.create([{
+            'name': 'India',
+            'code': 'IN'
+        }])
 
-            with app.test_client() as c:
-                response = c.get('/countries/%d/subdivisions' % country.id)
-                self.assertEqual(response.status_code, 200)
+        with app.test_client() as c:
+            response = c.get('/countries/%d/subdivisions' % country.id)
+            self.assertEqual(response.status_code, 200)
 
-                response = c.get('/countries/6/subdivisions')  # Invalid record
-                self.assertEqual(response.status_code, 404)
+            response = c.get('/countries/6/subdivisions')  # Invalid record
+            self.assertEqual(response.status_code, 404)
 
+    @with_transaction()
     def test_0070_csrf(self):
         """
         Test that the csrf for POST request
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            self.nereid_website.locales = []
-            self.nereid_website.save()
-            app = self.get_app()
-            # Enable CSRF
-            app.config['WTF_CSRF_ENABLED'] = True
+        self.setup_defaults()
+        self.nereid_website.locales = []
+        self.nereid_website.save()
+        app = self.get_app()
+        # Enable CSRF
+        app.config['WTF_CSRF_ENABLED'] = True
 
-            with app.test_client() as c:
-                # NO csrf-token
-                response = c.post('/test-csrf', data={
-                    'name': 'dummy name'
-                })
-                self.assertEqual(response.status_code, 400)
+        with app.test_client() as c:
+            # NO csrf-token
+            response = c.post('/test-csrf', data={
+                'name': 'dummy name'
+            })
+            self.assertEqual(response.status_code, 400)
 
-                # csrf token with invalid form
-                csrf_token = c.get('/gen-csrf').data
-                response = c.post('/test-csrf', data={
-                    'csrf_token': csrf_token,
-                })
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'Failure')
+            # csrf token with invalid form
+            csrf_token = c.get('/gen-csrf').data
+            response = c.post('/test-csrf', data={
+                'csrf_token': csrf_token,
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'Failure')
 
-                # csrf token with valid form
-                csrf_token = c.get('/gen-csrf').data
-                response = c.post('/test-csrf', data={
-                    'name': 'dummy name',
-                    'csrf_token': csrf_token,
-                })
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'Success')
+            # csrf token with valid form
+            csrf_token = c.get('/gen-csrf').data
+            response = c.post('/test-csrf', data={
+                'name': 'dummy name',
+                'csrf_token': csrf_token,
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'Success')
 
+    @with_transaction()
     def test_0070_csrf_exempt(self):
         """
         Test that the csrf exempt for POST request
         """
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
-            self.nereid_website.locales = []
-            self.nereid_website.save()
-            app = self.get_app()
-            # Enable CSRF
-            app.config['WTF_CSRF_ENABLED'] = True
+        self.setup_defaults()
+        self.nereid_website.locales = []
+        self.nereid_website.save()
+        app = self.get_app()
+        # Enable CSRF
+        app.config['WTF_CSRF_ENABLED'] = True
 
-            with app.test_client() as c:
-                # invalid form
-                response = c.post('/test-csrf-exempt', data={
-                    'name': '',
-                })
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'Failure')
+        with app.test_client() as c:
+            # invalid form
+            response = c.post('/test-csrf-exempt', data={
+                'name': '',
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'Failure')
 
-                # valid form
-                response = c.post('/test-csrf-exempt', data={
-                    'name': 'dummy name',
-                })
-                self.assertEqual(response.status_code, 200)
-                self.assertEqual(response.data, 'Success')
+            # valid form
+            response = c.post('/test-csrf-exempt', data={
+                'name': 'dummy name',
+            })
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.data, 'Success')
 
 
 def suite():

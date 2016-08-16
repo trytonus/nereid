@@ -25,13 +25,12 @@ from nereid.ctx import has_request_context
 from nereid.globals import current_app
 from nereid.signals import registration
 from nereid.templating import render_email
-from trytond.model import ModelView, ModelSQL, fields
+from trytond.model import ModelView, ModelSQL, fields, Unique
 from trytond.pool import Pool
 from trytond.pyson import Eval, Bool, Not
 from trytond.transaction import Transaction
 from trytond.config import config
 from trytond.rpc import RPC
-from trytond import backend
 from itsdangerous import URLSafeSerializer, TimestampSigner, SignatureExpired, \
     BadSignature, TimedJSONWebSignatureSerializer
 from .i18n import _
@@ -207,27 +206,6 @@ class NereidUser(ModelSQL, ModelView):
             return False
         return True
 
-    @classmethod
-    def __register__(cls, module_name):
-        TableHandler = backend.get("TableHandler")
-        table = TableHandler(Transaction().cursor, cls, module_name)
-        user = cls.__table__()
-
-        table.column_rename("display_name", "name")
-        super(NereidUser, cls).__register__(module_name)
-
-        # Migrations
-        if table.column_exist('activation_code'):
-            # Migration for activation_code field
-            # Set the email_verification and active based on activation code
-            user.update(
-                columns=[user.active, user.email_verified],
-                values=[True, True],
-                where=(user.activation_code == None)
-            )
-            # Finally drop the column
-            table.drop_column('activation_code', exception=True)
-
     def serialize(self, purpose=None):
         """
         Return a JSON serializable object that represents this record
@@ -282,8 +260,9 @@ class NereidUser(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(NereidUser, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints += [
-            ('unique_email_company', 'UNIQUE(email, company)',
+            ('unique_email_company', Unique(table, table.email, table.company),
                 'Email must be unique in a company'),
         ]
         cls.__rpc__.update({
@@ -901,7 +880,7 @@ class NereidUser(ModelSQL, ModelView):
             expires_in=current_app.token_validity_duration
         )
         local_txn = None
-        if Transaction().cursor is None:
+        if Transaction().connection.cursor() is None:
             # Flask-Login can call get_auth_token outside the context
             # of a nereid transaction. If that is the case, launch a
             # new transaction here.
@@ -1117,8 +1096,9 @@ class Permission(ModelSQL, ModelView):
     @classmethod
     def __setup__(cls):
         super(Permission, cls).__setup__()
+        table = cls.__table__()
         cls._sql_constraints += [
-            ('unique_value', 'UNIQUE(value)',
+            ('unique_value', Unique(table, table.value),
                 'Permissions must be unique by value'),
         ]
 

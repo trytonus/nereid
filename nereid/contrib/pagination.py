@@ -285,7 +285,7 @@ class QueryPagination(BasePagination):
         query = self.query
         query.columns = (Count(Distinct(self.primary_table.id)), )
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
 
         # temporarily remove order_by
         order_by = query.order_by
@@ -319,7 +319,7 @@ class QueryPagination(BasePagination):
         query.offset = None
         query.limit = None
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         cursor.execute(*query)
         rv = [x[0] for x in cursor.fetchall()]
 
@@ -343,7 +343,7 @@ class QueryPagination(BasePagination):
         query.offset = self.offset
         query.limit = self.per_page
 
-        cursor = Transaction().cursor
+        cursor = Transaction().connection.cursor()
         cursor.execute(*query)
         rv = [x[0] for x in cursor.fetchall()]
         return self.obj.browse(filter(None, rv))

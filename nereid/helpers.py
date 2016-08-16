@@ -64,7 +64,7 @@ def url_for(endpoint, **values):
     # There is no need to set language in URL for static files
     if endpoint != 'static' and \
             'locale' not in values and current_website.locales:
-        values['locale'] = request.nereid_locale.code
+        values['locale'] = current_locale.code
 
     return flask_url_for(endpoint, **values)
 
@@ -396,7 +396,7 @@ def root_transaction_if_required(function):
     def decorated_function(self, *args, **kwargs):
 
         transaction = None
-        if Transaction().cursor is None:
+        if Transaction().connection.cursor() is None:
             # Start transaction since cursor is None
             transaction = Transaction().start(
                 self.database_name, 0, readonly=True

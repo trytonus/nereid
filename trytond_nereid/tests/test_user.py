@@ -10,8 +10,7 @@ import unittest
 
 import trytond.tests.test_tryton
 from nereid.testing import NereidTestCase
-from trytond.tests.test_tryton import POOL, USER, DB_NAME, CONTEXT
-from trytond.transaction import Transaction
+from trytond.tests.test_tryton import POOL, USER, with_transaction
 
 
 class TestUser(NereidTestCase):
@@ -105,24 +104,23 @@ class TestUser(NereidTestCase):
             'home.jinja': '{{ "hell" }}',
         }
 
+    @with_transaction()
     def test_0010_user(self):
         "Test for User display_name deprecated field"
+        self.setup_defaults()
 
-        with Transaction().start(DB_NAME, USER, CONTEXT):
-            self.setup_defaults()
+        user, = self.nereid_user_obj.create([{
+            "display_name": "Fulfil.io",
+            "party": self.party.id,
+            "company": self.company.id,
+        }])
+        assert user.name == "Fulfil.io"
+        assert user.display_name == "Fulfil.io"
 
-            user, = self.nereid_user_obj.create([{
-                "display_name": "Fulfil.io",
-                "party": self.party.id,
-                "company": self.company.id,
-            }])
-            assert user.name == "Fulfil.io"
-            assert user.display_name == "Fulfil.io"
-
-            search_result, = self.nereid_user_obj.search([
-                ('display_name', '=', 'Fulfil.io'),
-            ])
-            assert search_result == user
+        search_result, = self.nereid_user_obj.search([
+            ('display_name', '=', 'Fulfil.io'),
+        ])
+        assert search_result == user
 
 
 def suite():
