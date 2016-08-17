@@ -396,8 +396,8 @@ def root_transaction_if_required(function):
     def decorated_function(self, *args, **kwargs):
 
         transaction = None
-        if Transaction().connection.cursor() is None:
-            # Start transaction since cursor is None
+        if Transaction().connection is None:
+            # Start transaction since connection is None
             transaction = Transaction().start(
                 self.database_name, 0, readonly=True
             )
@@ -405,7 +405,8 @@ def root_transaction_if_required(function):
             return function(self, *args, **kwargs)
         finally:
             if transaction is not None:
-                Transaction().stop()
+                # TODO: Find some better way close transaction
+                transaction.__exit__(None, None, None)
 
     return decorated_function
 
