@@ -449,19 +449,19 @@ class Nereid(Flask):
                     rv = self._dispatch_request(
                         req, language=language, active_id=active_id
                     )
-                    txn.cursor.commit()
+                    txn.commit()
                     transaction_commit.send(self)
                 except DatabaseOperationalError:
                     # Strict transaction handling may cause this.
                     # Rollback and Retry the whole transaction if within
                     # max retries, or raise exception and quit.
-                    txn.cursor.rollback()
+                    txn.rollback()
                     if count:
                         continue
                     raise
                 except Exception:
                     # Rollback and raise any other exception
-                    txn.cursor.rollback()
+                    txn.rollback()
                     raise
                 else:
                     return rv
