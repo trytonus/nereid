@@ -499,7 +499,7 @@ class NereidUser(ModelSQL, ModelView):
         try:
             nereid_user, = cls.search([
                 ('email', '=', email),
-                ('company', '=', request.nereid_website.company.id),
+                ('company', '=', current_website.company.id),
             ])
         except ValueError:
             # This email was not found so, let user know about this
