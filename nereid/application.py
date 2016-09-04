@@ -361,8 +361,6 @@ class Nereid(Flask):
             ))
             config.update_etc(self.tryton_configfile)
 
-        register_classes()
-
         # Load and initialise pool
         Database = backend.get('Database')
         self._database = Database(self.database_name).connect()
