@@ -406,7 +406,7 @@ class NereidUser(ModelSQL, ModelView):
         if registration_form.validate_on_submit():
             with Transaction().set_context(active_test=False):
                 existing = cls.search([
-                    ('email', '=', registration_form.email.data),
+                    ('email', 'ilike', registration_form.email.data),
                     ('company', '=', current_website.company.id),
                 ])
             if existing:
@@ -498,7 +498,7 @@ class NereidUser(ModelSQL, ModelView):
 
         try:
             nereid_user, = cls.search([
-                ('email', '=', email),
+                ('email', 'ilike', email),
                 ('company', '=', current_website.company.id),
             ])
         except ValueError:
@@ -694,7 +694,7 @@ class NereidUser(ModelSQL, ModelView):
         if form.validate_on_submit():
             try:
                 nereid_user, = cls.search([
-                    ('email', '=', form.email.data),
+                    ('email', 'ilike', form.email.data),
                     ('company', '=', current_website.company.id),
                 ])
             except ValueError:
@@ -771,7 +771,7 @@ class NereidUser(ModelSQL, ModelView):
             return None
         with Transaction().set_context(active_test=False):
             users = cls.search([
-                ('email', '=', email),
+                ('email', 'ilike', email),
                 ('company', '=', current_website.company.id),
             ])
 

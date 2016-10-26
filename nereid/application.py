@@ -22,7 +22,6 @@ from trytond.pool import Pool
 from trytond.cache import Cache
 from trytond.config import config
 from trytond.exceptions import UserError
-from trytond.modules import register_classes
 from trytond.transaction import Transaction
 
 from .wrappers import Request, Response
