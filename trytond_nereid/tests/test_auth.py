@@ -136,7 +136,7 @@ class TestAuth(NereidTestCase):
         with Transaction().set_context(active_test=False):
             self.assertEqual(
                 self.nereid_user_obj.search(
-                    [('email', '=', data['email'])], count=True
+                    [('email', 'ilike', data['email'])], count=True
                 ), 1
             )
 
@@ -197,7 +197,7 @@ class TestAuth(NereidTestCase):
         with Transaction().set_context(active_test=False):
             self.assertEqual(
                 self.nereid_user_obj.search(
-                    [('email', '=', data['email'])], count=True
+                    [('email', 'ilike', data['email'])], count=True
                 ), 1
             )
 
@@ -261,7 +261,7 @@ class TestAuth(NereidTestCase):
 
             with Transaction().set_context(active_test=False):
                 registered_user, = self.nereid_user_obj.search(
-                    [('email', '=', data['email'])]
+                    [('email', 'ilike', data['email'])]
                 )
             self.assertFalse(registered_user.email_verified)
 
@@ -302,7 +302,7 @@ class TestAuth(NereidTestCase):
 
             with Transaction().set_context(active_test=False):
                 registered_user, = self.nereid_user_obj.search(
-                    [('email', '=', data['email'])]
+                    [('email', 'ilike', data['email'])]
                 )
             self.assertFalse(registered_user.active)
 
