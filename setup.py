@@ -145,7 +145,7 @@ install_requires.append(
 # Testing dependencies
 tests_require = [
     'mock',
-    'pycountry',
+    'pycountry>=16.11.08',
 ]
 
 setup(
