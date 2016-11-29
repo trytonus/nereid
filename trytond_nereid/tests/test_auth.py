@@ -136,7 +136,7 @@ class TestAuth(NereidTestCase):
         with Transaction().set_context(active_test=False):
             self.assertEqual(
                 self.nereid_user_obj.search(
-                    [('email', 'ilike', data['email'])], count=True
+                    [('email', '=', data['email'].lower())], count=True
                 ), 1
             )
 
@@ -197,7 +197,7 @@ class TestAuth(NereidTestCase):
         with Transaction().set_context(active_test=False):
             self.assertEqual(
                 self.nereid_user_obj.search(
-                    [('email', 'ilike', data['email'])], count=True
+                    [('email', '=', data['email'].lower())], count=True
                 ), 1
             )
 
@@ -261,7 +261,7 @@ class TestAuth(NereidTestCase):
 
             with Transaction().set_context(active_test=False):
                 registered_user, = self.nereid_user_obj.search(
-                    [('email', 'ilike', data['email'])]
+                    [('email', '=', data['email'].lower())]
                 )
             self.assertFalse(registered_user.email_verified)
 
@@ -302,7 +302,7 @@ class TestAuth(NereidTestCase):
 
             with Transaction().set_context(active_test=False):
                 registered_user, = self.nereid_user_obj.search(
-                    [('email', 'ilike', data['email'])]
+                    [('email', '=', data['email'].lower())]
                 )
             self.assertFalse(registered_user.active)
 
@@ -1200,6 +1200,177 @@ class TestAuth(NereidTestCase):
 
             response = c.get("/me")
             self.assertEqual(response.status_code, 200)
+
+    @with_transaction()
+    def test_0450_login_with_case_sensitive_emails(self):
+        """
+        Check for login with case sensitive emails
+        """
+        self.setup_defaults()
+        app = self.get_app()
+
+        party, = self.party_obj.create([{'name': 'Registered user'}])
+        data = {
+            'party': party,
+            'display_name': 'Registered User',
+            'email': 'email@example.com',
+            'password': 'password',
+            'company': self.company,
+        }
+        self.nereid_user_obj.create([data.copy()])
+
+        with app.test_client() as c:
+            response = c.get("/account")
+            self.assertEqual(response.status_code, 302)
+
+            # Login with original email
+            response = c.post(
+                '/login',
+                data={'email': data['email'], 'password': data['password']}
+            )
+            self.assertEqual(response.status_code, 302)
+
+            response = c.get("/account")
+            self.assertEqual(response.status_code, 200)
+
+            response = c.get("/logout")
+            self.assertEqual(response.status_code, 302)
+
+            # Logged out user cannot open account page
+            response = c.get("/account")
+            self.assertEqual(response.status_code, 302)
+
+            # Login with emails in upper case
+            response = c.post(
+                '/login',
+                data={
+                    'email': data['email'].upper(),
+                    'password': data['password']
+                }
+            )
+            self.assertEqual(response.status_code, 302)
+
+            response = c.get("/account")
+            self.assertEqual(response.status_code, 200)
+
+            response = c.get("/logout")
+            self.assertEqual(response.status_code, 302)
+
+    @with_transaction()
+    def test_0500_register_with_case_sensitive_emails(self):
+        """
+        Registration with case sensitive emails should not be allowed
+        """
+        EmailQueue = POOL.get('email.queue')
+
+        self.setup_defaults()
+        app = self.get_app()
+
+        with app.test_client() as c:
+            response = c.get('/registration')
+            self.assertEqual(response.status_code, 200)   # GET Request
+
+            data = {
+                'name': 'Registered User',
+                'email': 'regd_user@fulfil.io',
+                'password': 'password',
+                'confirm': 'password'
+            }
+            response = c.post('/registration', data=data)
+            self.assertEqual(response.status_code, 302)
+
+            # Test if an email record is created in email queue
+            self.assertEqual(
+                EmailQueue.search([], count=True), 1
+            )
+
+        parties = self.party_obj.search([('name', '=', data['name'])])
+
+        self.assertEqual(len(parties), 1)
+        self.assertEqual(len(parties[0].contact_mechanisms), 1)
+        self.assertEqual(parties[0].contact_mechanisms[0].type, 'email')
+        self.assertEqual(
+            parties[0].contact_mechanisms[0].value,
+            'regd_user@fulfil.io'
+        )
+
+        with Transaction().set_context(active_test=False):
+            self.assertEqual(
+                self.nereid_user_obj.search(
+                    [('email', '=', data['email'].lower())], count=True
+                ), 1
+            )
+
+        with app.test_client() as c:
+            # User try to register with same email in different case.
+            data['email'] = data['email'].upper()
+            response = c.post('/registration', data=data)
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(
+                "A registration already exists with this email" in response.data
+            )
+
+    @with_transaction()
+    def test_0550_reset_password_with_case_sensitive_emails(self):
+        """Test reset password works with case sensitive emails as well
+        """
+        self.setup_defaults()
+        app = self.get_app()
+
+        party, = self.party_obj.create([{'name': 'Registered user'}])
+        data = {
+            'party': party,
+            'display_name': 'Registered User',
+            'email': 'email@example.com',
+            'password': 'password',
+            'company': self.company,
+        }
+        regd_user, = self.nereid_user_obj.create([data.copy()])
+
+        with app.test_client() as c:
+            # Reset email with original email
+            response = c.post('/reset-account', data={
+                'email': data['email'],
+            })
+            self.assertEqual(response.status_code, 302)
+
+            # Reset password with valid code
+            response = c.post(regd_user.get_reset_password_link(), data={
+                'password': 'reset-password',
+                'confirm': 'reset-password'
+            })
+            self.assertEqual(response.status_code, 302)
+
+            response = c.post(
+                '/login',
+                data={
+                    'email': data['email'],
+                    'password': 'reset-password'
+                }
+            )
+            self.assertEqual(response.status_code, 302)     # Login approved
+
+            # Reset email with case sensitive email
+            response = c.post('/reset-account', data={
+                'email': data['email'].upper(),
+            })
+            self.assertEqual(response.status_code, 302)
+
+            # Reset password with valid code
+            response = c.post(regd_user.get_reset_password_link(), data={
+                'password': 'new-password',
+                'confirm': 'new-password'
+            })
+            self.assertEqual(response.status_code, 302)
+
+            response = c.post(
+                '/login',
+                data={
+                    'email': data['email'],
+                    'password': 'new-password'
+                }
+            )
+            self.assertEqual(response.status_code, 302)     # Login approved
 
 
 def suite():
