@@ -140,6 +140,7 @@ def get_locale():
         ctx.babel_locale = locale
     return locale
 
+
 flask.ext.babel.get_locale = get_locale
 
 
@@ -171,6 +172,7 @@ def get_timezone():
                     tzinfo = rv
         ctx.babel_tzinfo = tzinfo
     return tzinfo
+
 
 flask.ext.babel.get_timezone = get_timezone
 
