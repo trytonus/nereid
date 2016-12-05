@@ -42,11 +42,11 @@ class BaseTestCase(NereidTestCase):
         for country in list(pycountry.countries)[0:count]:
             country_id, = self.country_obj.create([{
                 'name': country.name,
-                'code': country.alpha2,
+                'code': country.alpha_2,
             }])
             try:
                 divisions = pycountry.subdivisions.get(
-                    country_code=country.alpha2
+                    country_code=country.alpha_2
                 )
             except KeyError:
                 pass

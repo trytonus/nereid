@@ -260,7 +260,7 @@ class Translation:
                     translation.overriding_module != module):
                 cls.raise_user_error('translation_overridden', {
                     'name': translation.name,
-                    'name': translation.overriding_module,
+                    'overriding_module': translation.overriding_module,
                 })
             flags = [] if not translation.fuzzy else ['fuzzy']
             trans_ctxt = '%(type)s:%(name)s:' % {

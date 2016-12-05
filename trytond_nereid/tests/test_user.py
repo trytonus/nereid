@@ -11,6 +11,7 @@ import unittest
 import trytond.tests.test_tryton
 from nereid.testing import NereidTestCase
 from trytond.tests.test_tryton import POOL, USER, with_transaction
+from trytond.exceptions import UserError
 
 
 class TestUser(NereidTestCase):
@@ -121,6 +122,29 @@ class TestUser(NereidTestCase):
             ('display_name', '=', 'Fulfil.io'),
         ])
         assert search_result == user
+
+    @with_transaction()
+    def test_0020_user_email_case_sensitive(self):
+        """Backend user should not be allowed to create user with case
+        sensitive emails
+        """
+        self.setup_defaults()
+
+        user, = self.nereid_user_obj.create([{
+            "display_name": "Fulfil.io",
+            "email": "pp@fulfil.io",
+            "party": self.party.id,
+            "company": self.company.id,
+        }])
+
+        # Try create a new user with same email but in upper case
+        with self.assertRaises(UserError):
+            user, = self.nereid_user_obj.create([{
+                "display_name": "Fulfil.io",
+                "email": "PP@FULFIL.IO",
+                "party": self.party.id,
+                "company": self.company.id,
+            }])
 
 
 def suite():
