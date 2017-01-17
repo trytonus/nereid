@@ -155,15 +155,6 @@ class NereidUser(ModelSQL, ModelView):
     active = fields.Boolean('Active')
 
     @classmethod
-    def __register__(cls, module_name):
-        super(NereidUser, cls).__register__(module_name)
-
-        # XXX: Remove in next version
-        Transaction().connection.cursor().execute(
-            'UPDATE %s SET email = LOWER(email)' % cls._table
-        )
-
-    @classmethod
     def get_display_name(cls, records, name):
         "Returns the display name"
         warnings.warn(
