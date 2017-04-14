@@ -27,4 +27,6 @@ class Currency(ModelSQL, ModelView):
     @context_processor('compute')
     def compute(cls, from_currency, amount, to_currency, round=True):
         """Adds compute method to context processors"""
-        return super(Currency, cls).compute(from_currency, amount, to_currency)
+        return super(Currency, cls).compute(
+            from_currency, amount, to_currency, round
+        )
