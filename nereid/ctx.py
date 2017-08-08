@@ -1,7 +1,9 @@
 # This file is part of Tryton & Nereid. The COPYRIGHT file at the top level of
 # this repository contains the full copyright notices and license terms.
 from flask.ctx import RequestContext as RequestContextBase
-from flask.ctx import has_request_context  # noqa
+from flask.ctx import has_request_context as base_has_request_context
+
+from .globals import current_app
 
 
 class RequestContext(RequestContextBase):
@@ -16,3 +18,13 @@ class RequestContext(RequestContextBase):
         super(RequestContext, self).__init__(app, environ, request)
         self.transaction = None
         self.cache = app.cache
+
+
+def has_request_context():
+    """Return True is request is for nereid
+    """
+    from .application import Nereid
+
+    if not isinstance(current_app._get_current_object(), Nereid):
+        return False
+    return base_has_request_context()
