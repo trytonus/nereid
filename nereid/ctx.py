@@ -25,6 +25,5 @@ def has_request_context():
     """
     from .application import Nereid
 
-    if not isinstance(current_app._get_current_object(), Nereid):
-        return False
-    return base_has_request_context()
+    return base_has_request_context() and \
+        isinstance(current_app._get_current_object(), Nereid)
