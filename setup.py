@@ -117,7 +117,7 @@ minor_version = int(minor_version)
 
 install_requires = [
     'pytz',
-    'flask>=0.10',
+    'flask>=0.10,<1.0',
     'flask-wtf==0.12',
     'blinker',
     'speaklater',
