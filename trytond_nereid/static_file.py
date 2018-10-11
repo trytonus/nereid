@@ -118,6 +118,10 @@ class NereidStaticFile(ModelSQL, ModelView):
             'invalid_file_name': """Invalid file name:
                 (1) '..' in file name (OR)
                 (2) file name contains '/'""",
+            'missing_extension': (
+                "File extension is missing from file name and it is required"
+                " to guess file type."
+            )
         })
 
     @staticmethod
@@ -237,7 +241,11 @@ class NereidStaticFile(ModelSQL, ModelView):
         Allowing the use of / or . will be risky as that could
         eventually lead to previlege escalation
         '''
-        if ('..' in self.name) or ('/' in self.name):
+        file_name, file_extension = os.path.splitext(self.name)
+
+        if (not file_extension) or (file_extension == "."):
+            self.raise_user_error("missing_extension")
+        elif (".." in self.name) or ("/" in file_name):
             self.raise_user_error("invalid_file_name")
 
     @classmethod
